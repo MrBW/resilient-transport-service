@@ -5,6 +5,7 @@
 
 # Package Files #
 *.jar
+*.original
 *.war
 *.ear
 
@@ -12,3 +13,7 @@
 hs_err_pid*
 .idea/
 *.iml
+
+derby.log
+maven-archiver*
+target/
