@@ -64,8 +64,16 @@
         <dependency>
             <groupId>com.codecentric.de.resilient</groupId>
             <artifactId>service-library</artifactId>
-            <version>1.0</version>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

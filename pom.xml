@@ -11,11 +11,12 @@
 
     <modules>
         <module>eurekaserver</module>
-        <module>connoteservice</module>
+        <module>connote-service</module>
         <module>spring-boot-admin</module>
         <module>service-library</module>
         <module>address-service</module>
         <module>customer-service</module>
+        <module>booking-service</module>
     </modules>
 
     <parent>
@@ -28,8 +29,10 @@
     <properties>
         <!--Docker Container Image Prefix -->
         <docker.image.prefix>transport-service</docker.image.prefix>
+        <!-- Encoding, java compile version -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
+        <!-- Library versions-->
         <netflix.archaius.version>0.7.4</netflix.archaius.version>
         <spring-cloud-dependencies.version>Brixton.SR5</spring-cloud-dependencies.version>
         <commons-lang3.version>3.4</commons-lang3.version>
@@ -38,34 +41,49 @@
         <jolokia-core.version>1.3.5</jolokia-core.version>
         <joda-time.version>2.9.7</joda-time.version>
         <etcd-client.version>0.34</etcd-client.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
+        <!-- shared components -->
+        <service-library.version>1.0</service-library.version>
+        <docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
     </properties>
 
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
 
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.4.11</version>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
 
-                <configuration>
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <dockerDirectory>src/main/docker</dockerDirectory>
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
-        </plugins>
+                    <configuration>
+                        <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                        <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
+                        <resources>
+                            <resource>
+                                <targetPath>/</targetPath>
+                                <directory>${project.build.directory}</directory>
+                                <include>${project.build.finalName}.jar</include>
+                            </resource>
+                        </resources>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>build-image</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>build</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <dependencyManagement>
@@ -135,7 +153,12 @@
             <dependency>
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
-                <version>1.10</version>
+                <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codecentric.de.resilient</groupId>
+                <artifactId>service-library</artifactId>
+                <version>${service-library.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

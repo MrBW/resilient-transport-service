@@ -22,7 +22,8 @@ services:
 
   spring-boot-admin:
      image: transport-service/spring-boot-admin
-
+     ports:
+             - "8099:8080"
      networks:
              - servicenet
      depends_on:
@@ -38,6 +39,17 @@ services:
 
   customer-service:
          image: transport-service/customer-service
+
+         networks:
+                 - servicenet
+         depends_on:
+                 - eureka-server
+
+  booking-service:
+         image: transport-service/booking-service
+
+         ports:
+                 - "8098:8080"
 
          networks:
                  - servicenet

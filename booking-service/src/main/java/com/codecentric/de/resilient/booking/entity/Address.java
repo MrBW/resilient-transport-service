@@ -1,38 +1,28 @@
-package com.codecentric.de.resilient.dto;
+package com.codecentric.de.resilient.booking.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import javax.persistence.Basic;
+import javax.persistence.Embeddable;
 
 /**
  * @author Benjamin Wilms
  */
-public class AddressDTO extends AbstractDTO {
+@Embeddable
+public class Address {
 
-    @JsonProperty(required = true)
+    @Basic
     private String country;
 
-    @JsonProperty(required = true)
+    @Basic
     private String city;
 
-    @JsonProperty(required = true)
+    @Basic
     private String postcode;
 
-    @JsonProperty(required = true)
+    @Basic
     private String street;
 
-    @JsonProperty(required = true)
+    @Basic
     private String streetNumber;
-
-    public AddressDTO() {
-    }
-
-    public AddressDTO(String country, String city, String postcode, String street, String streetNumber) {
-        this.country = country;
-        this.city = city;
-        this.postcode = postcode;
-        this.street = street;
-        this.streetNumber = streetNumber;
-    }
 
     public String getCountry() {
         return country;
@@ -73,5 +63,4 @@ public class AddressDTO extends AbstractDTO {
     public void setStreetNumber(String streetNumber) {
         this.streetNumber = streetNumber;
     }
-
 }

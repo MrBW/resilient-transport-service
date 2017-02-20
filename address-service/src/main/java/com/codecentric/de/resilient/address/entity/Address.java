@@ -1,37 +1,55 @@
-package com.codecentric.de.resilient.dto;
+package com.codecentric.de.resilient.address.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
- * @author Benjamin Wilms
+ * @author Benjamin Wilms (xd98870)
  */
-public class AddressDTO extends AbstractDTO {
 
-    @JsonProperty(required = true)
+@Entity
+public class Address {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String country;
 
-    @JsonProperty(required = true)
     private String city;
 
-    @JsonProperty(required = true)
     private String postcode;
 
-    @JsonProperty(required = true)
     private String street;
 
-    @JsonProperty(required = true)
     private String streetNumber;
 
-    public AddressDTO() {
+    public Address() {
     }
 
-    public AddressDTO(String country, String city, String postcode, String street, String streetNumber) {
+    /***
+     *
+     * @param country
+     * @param city
+     * @param postcode
+     * @param street
+     * @param streetNumber
+     */
+    public Address(String country, String city, String postcode, String street, String streetNumber) {
         this.country = country;
         this.city = city;
         this.postcode = postcode;
         this.street = street;
         this.streetNumber = streetNumber;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCountry() {
@@ -73,5 +91,4 @@ public class AddressDTO extends AbstractDTO {
     public void setStreetNumber(String streetNumber) {
         this.streetNumber = streetNumber;
     }
-
 }
