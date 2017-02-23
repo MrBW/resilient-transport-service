@@ -1,11 +1,10 @@
 package com.codecentric.de.resilient.booking.mapper;
 
-import com.codecentric.de.resilient.dto.BookingRequestDTO;
+import com.codecentric.de.resilient.dto.BookingServiceRequestDTO;
 import org.springframework.stereotype.Component;
 import com.codecentric.de.resilient.booking.entity.Address;
 import com.codecentric.de.resilient.booking.entity.Booking;
 import com.codecentric.de.resilient.booking.entity.Customer;
-import com.codecentric.de.resilient.dto.BookingResponseDTO;
 import com.codecentric.de.resilient.dto.CustomerDTO;
 
 /**
@@ -14,7 +13,7 @@ import com.codecentric.de.resilient.dto.CustomerDTO;
 @Component
 public class BookingMapper {
 
-    public Booking mapToBookingEntity(BookingRequestDTO bookingRequestDTO, Long connote) {
+    public Booking mapToBookingEntity(BookingServiceRequestDTO bookingRequestDTO, Long connote) {
         Booking booking = new Booking();
         booking.setConnote(connote);
         booking.setReceiverAddress(mapToAddressEntity(booking.getReceiverAddress()));

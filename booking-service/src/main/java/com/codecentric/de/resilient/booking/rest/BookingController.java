@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.codecentric.de.resilient.booking.service.BookingService;
 import com.codecentric.de.resilient.dto.AddressDTO;
-import com.codecentric.de.resilient.dto.BookingRequestDTO;
-import com.codecentric.de.resilient.dto.BookingResponseDTO;
+import com.codecentric.de.resilient.dto.BookingServiceRequestDTO;
+import com.codecentric.de.resilient.dto.BookingServiceResponseDTO;
 import com.codecentric.de.resilient.dto.CustomerDTO;
 
 /**
@@ -27,16 +27,16 @@ public class BookingController {
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<BookingResponseDTO> create(@RequestBody BookingRequestDTO bookingRequestDTO,
-            HttpServletRequest request) {
-        BookingResponseDTO booking = bookingService.createBooking(bookingRequestDTO);
+    public ResponseEntity<BookingServiceResponseDTO> create(@RequestBody BookingServiceRequestDTO bookingRequestDTO,
+                                                            HttpServletRequest request) {
+        BookingServiceResponseDTO booking = bookingService.createBooking(bookingRequestDTO);
 
         return new ResponseEntity<>(booking, HttpStatus.OK);
     }
 
     @RequestMapping(value = "generate")
-    public ResponseEntity<BookingRequestDTO> generate(HttpServletRequest request) {
-        BookingRequestDTO bookingRequestDTO = new BookingRequestDTO();
+    public ResponseEntity<BookingServiceRequestDTO> generate(HttpServletRequest request) {
+        BookingServiceRequestDTO bookingRequestDTO = new BookingServiceRequestDTO();
         bookingRequestDTO.setReceiverAddress(new AddressDTO("", "", "", "", ""));
         bookingRequestDTO.setSenderAddress(new AddressDTO("", "", "", "", ""));
         bookingRequestDTO.setCustomerDTO(new CustomerDTO(0L, ""));

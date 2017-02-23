@@ -35,12 +35,12 @@ public class BookingControllerTest {
 
     @Test
     public void create() throws Exception {
-        BookingRequestDTO bookingRequestDTO = new BookingRequestDTO();
+        BookingServiceRequestDTO bookingRequestDTO = new BookingServiceRequestDTO();
         bookingRequestDTO.setCustomerDTO(createCustomerDTO());
         bookingRequestDTO.setReceiverAddress(createAddress());
         bookingRequestDTO.setSenderAddress(createAddress());
 
-        BookingResponseDTO bookingResponseDTO = new BookingResponseDTO();
+        BookingServiceResponseDTO bookingResponseDTO = new BookingServiceResponseDTO();
         ConnoteDTO connoteDTO = new ConnoteDTO();
         connoteDTO.setConnote(123L);
         bookingResponseDTO.setConnoteDTO(connoteDTO);
@@ -74,7 +74,7 @@ public class BookingControllerTest {
 
     }
 
-    private String jsonStringFromObject(BookingRequestDTO bookingRequestDTO) throws JsonProcessingException {
+    private String jsonStringFromObject(BookingServiceRequestDTO bookingRequestDTO) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(bookingRequestDTO);
     }

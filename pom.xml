@@ -17,6 +17,7 @@
         <module>address-service</module>
         <module>customer-service</module>
         <module>booking-service</module>
+        <module>transport-api-gateway</module>
     </modules>
 
     <parent>

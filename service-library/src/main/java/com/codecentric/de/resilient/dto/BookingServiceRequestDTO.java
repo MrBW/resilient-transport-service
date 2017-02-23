@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * Booking Request DTO
  * @author Benjamin Wilms
  */
-public class BookingRequestDTO extends AbstractDTO{
+public class BookingServiceRequestDTO extends AbstractDTO{
 
     private CustomerDTO customerDTO;
 

@@ -7,8 +7,8 @@ import org.springframework.web.client.RestTemplate;
 import com.codecentric.de.resilient.booking.entity.Booking;
 import com.codecentric.de.resilient.booking.mapper.BookingMapper;
 import com.codecentric.de.resilient.booking.repository.BookingRepository;
-import com.codecentric.de.resilient.dto.BookingRequestDTO;
-import com.codecentric.de.resilient.dto.BookingResponseDTO;
+import com.codecentric.de.resilient.dto.BookingServiceRequestDTO;
+import com.codecentric.de.resilient.dto.BookingServiceResponseDTO;
 import com.codecentric.de.resilient.dto.ConnoteDTO;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
@@ -33,9 +33,9 @@ public class BookingService {
         this.discoveryClient = discoveryClient;
     }
 
-    public BookingResponseDTO createBooking(BookingRequestDTO bookingRequestDTO) {
+    public BookingServiceResponseDTO createBooking(BookingServiceRequestDTO bookingRequestDTO) {
 
-        BookingResponseDTO bookingResponseDTO = new BookingResponseDTO();
+        BookingServiceResponseDTO bookingResponseDTO = new BookingServiceResponseDTO();
 
         // 1.) Create connote
         ConnoteDTO connoteDTO = receiveConnote();
@@ -52,19 +52,19 @@ public class BookingService {
 
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackOneBooking")
+    @HystrixCommand(fallbackMethod = "fallbackGetConnote")
     private ConnoteDTO receiveConnote() {
         return getConnoteDTO();
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackFinalBooking")
-    private ConnoteDTO fallbackOneBooking() {
+    @HystrixCommand(fallbackMethod = "fallbackGetConnoteFinal")
+    private ConnoteDTO fallbackGetConnote() {
 
         return getConnoteDTO();
 
     }
 
-    private ConnoteDTO fallbackFinalBooking(Throwable throwable) {
+    private ConnoteDTO fallbackGetConnoteFinal(Throwable throwable) {
         ConnoteDTO connoteDTO = new ConnoteDTO();
         connoteDTO.setConnote(null);
         connoteDTO.setCreated(null);

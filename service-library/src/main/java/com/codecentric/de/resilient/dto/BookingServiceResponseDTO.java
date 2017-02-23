@@ -2,12 +2,11 @@ package com.codecentric.de.resilient.dto;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * @author Benjamin Wilms
  */
-public class BookingResponseDTO extends AbstractDTO {
+public class BookingServiceResponseDTO extends AbstractDTO {
 
     @JsonProperty(required = true)
     private ConnoteDTO connoteDTO;
