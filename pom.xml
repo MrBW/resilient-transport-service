@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>eurekaserver</module>
+        <module>eureka-service</module>
         <module>connote-service</module>
         <module>spring-boot-admin</module>
         <module>service-library</module>
@@ -18,6 +18,7 @@
         <module>customer-service</module>
         <module>booking-service</module>
         <module>transport-api-gateway</module>
+        <module>zipkin-service</module>
     </modules>
 
     <parent>
@@ -30,8 +31,8 @@
     <properties>
         <!--Docker Container Image Prefix -->
         <docker.image.prefix>transport-service</docker.image.prefix>
-        <!-- Encoding, java compile version -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <!-- Library versions-->
         <netflix.archaius.version>0.7.4</netflix.archaius.version>

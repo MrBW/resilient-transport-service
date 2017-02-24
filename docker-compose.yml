@@ -5,8 +5,8 @@ networks:
     driver: bridge
 
 services:
-  eureka-server:
-    image: transport-service/eureka-server
+  eureka-service:
+    image: transport-service/eureka-service
     ports:
             - "8761:8761"
     networks:
@@ -60,3 +60,12 @@ services:
                  - servicenet
          depends_on:
                  - eureka-server
+
+  zipkin-service:
+         image: transport-service/zipkin-service
+         ports:
+                - "9411:9411"
+         networks:
+                - servicenet
+         depends_on:
+                - eureka-server
