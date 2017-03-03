@@ -42,6 +42,7 @@ public class BookingService {
         ConnoteDTO connoteDTO = receiveConnote();
 
         // 2. Save booking request
+
         Booking booking = bookingMapper.mapToBookingEntity(bookingRequestDTO, connoteDTO.getConnote());
         bookingRepository.save(booking);
 

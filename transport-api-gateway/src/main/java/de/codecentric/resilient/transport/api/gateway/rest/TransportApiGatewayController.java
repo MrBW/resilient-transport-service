@@ -1,8 +1,8 @@
 package de.codecentric.resilient.transport.api.gateway.rest;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletRequest;
-
-import de.codecentric.resilient.transport.api.gateway.dto.BookingRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import de.codecentric.resilient.dto.AddressDTO;
-import de.codecentric.resilient.dto.BookingServiceRequestDTO;
-import de.codecentric.resilient.dto.BookingServiceResponseDTO;
-import de.codecentric.resilient.dto.CustomerDTO;
+import de.codecentric.resilient.dto.*;
+import de.codecentric.resilient.transport.api.gateway.commands.AddressCommand;
+import de.codecentric.resilient.transport.api.gateway.commands.BookingCommand;
+import de.codecentric.resilient.transport.api.gateway.commands.CustommerCommand;
+import de.codecentric.resilient.transport.api.gateway.dto.BookingRequestDTO;
+import de.codecentric.resilient.transport.api.gateway.dto.CustomerResponseDTO;
+import de.codecentric.resilient.transport.api.gateway.mapper.BookingRequestMapper;
 
 /**
  * @author Benjamin Wilms
@@ -26,9 +29,12 @@ public class TransportApiGatewayController {
 
     private final RestTemplate restTemplate;
 
+    private final BookingRequestMapper bookingRequestMapper;
+
     @Autowired
-    public TransportApiGatewayController(RestTemplate restTemplate) {
+    public TransportApiGatewayController(RestTemplate restTemplate, BookingRequestMapper bookingRequestMapper) {
         this.restTemplate = restTemplate;
+        this.bookingRequestMapper = bookingRequestMapper;
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
@@ -38,22 +44,48 @@ public class TransportApiGatewayController {
 
         LOGGER.debug(LOGGER.isDebugEnabled() ? "Booking Request: " + bookingRequestDTO.toString() : null);
 
-        // 1.) check customer
-        CustomerDTO customerDTO = checkCustomer(bookingRequestDTO);
-        LOGGER.debug(LOGGER.isDebugEnabled() ? "Customer checked: " + customerDTO.toString() : null);
-
-        // 2.) check sender address
-        AddressDTO senderAddressDTO = checkAddress(exctractSenderAddress(bookingRequestDTO));
-        LOGGER.debug(LOGGER.isDebugEnabled() ? "Sender checked: " + senderAddressDTO.toString() : null);
-
-        // 3.) check receiver address
-        AddressDTO receiverAddressDTO = checkAddress(exctractReceiverAddress(bookingRequestDTO));
-        LOGGER.debug(LOGGER.isDebugEnabled() ? "Receiver checked: " + receiverAddressDTO.toString() : null);
-
-        // 4.) create booking with
-        BookingServiceResponseDTO responseDTO = createBookingRequest(customerDTO, senderAddressDTO, receiverAddressDTO);
+        BookingServiceResponseDTO responseDTO = executeBookingRequest(bookingRequestDTO);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    private BookingServiceResponseDTO executeBookingRequest(@RequestBody BookingRequestDTO bookingRequestDTO) {
+        // 1.) check customer
+        Future<CustomerResponseDTO> customerRequestFuture = checkCustomer(bookingRequestDTO);
+
+        // 2.) check sender address
+        Future<AddressResponseDTO> senderAddressFuture = checkAddress(exctractSenderAddress(bookingRequestDTO));
+
+        // 3.) check receiver address
+        Future<AddressResponseDTO> receiverAddressFuture = checkAddress(exctractReceiverAddress(bookingRequestDTO));
+
+        CustomerDTO customerDTO = null;
+        AddressDTO addressSenderDTO = null;
+        AddressDTO addressReceiverDTO = null;
+        try {
+            customerDTO = bookingRequestMapper.mapCustomerResponseToCustomerDTO(customerRequestFuture.get());
+            addressSenderDTO = bookingRequestMapper.mapAddressResponseToAddressDTO(senderAddressFuture.get());
+            addressReceiverDTO = bookingRequestMapper.mapAddressResponseToAddressDTO(receiverAddressFuture.get());
+
+        } catch (InterruptedException e) {
+            String msg = "Interrupted Exception -  while receive future";
+            LOGGER.error(msg, e);
+            return createBookingResponseFallback(msg, e);
+        } catch (ExecutionException e) {
+            String msg = "Execution Exception -  while receive future";
+            LOGGER.error(msg, e);
+            return createBookingResponseFallback(msg, e);
+        }
+
+        // 4.) create booking with
+        return createBookingRequest(customerDTO, addressSenderDTO, addressReceiverDTO);
+    }
+
+    private BookingServiceResponseDTO createBookingResponseFallback(String msg, Exception e) {
+
+        BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
+        bookingServiceResponseDTO.setErrorMsg(msg + ": " + e.getMessage());
+        return bookingServiceResponseDTO;
     }
 
     @RequestMapping(value = "generate")
@@ -65,31 +97,24 @@ public class TransportApiGatewayController {
     private BookingServiceResponseDTO createBookingRequest(CustomerDTO customerDTO, AddressDTO senderAddressDTO,
             AddressDTO receiverAddressDTO) {
 
-        BookingServiceRequestDTO bookingServiceRequestDTO = new BookingServiceRequestDTO();
-        bookingServiceRequestDTO.setSenderAddress(senderAddressDTO);
-        bookingServiceRequestDTO.setReceiverAddress(receiverAddressDTO);
-        bookingServiceRequestDTO.setCustomerDTO(customerDTO);
+        BookingServiceRequestDTO bookingServiceRequestDTO =
+            bookingRequestMapper.mapBookingRequestToBookingServiceRequest(customerDTO, senderAddressDTO, receiverAddressDTO);
 
-        LOGGER.debug(LOGGER.isDebugEnabled() ? "Start booking: " + bookingServiceRequestDTO.toString() : null);
-
-        return restTemplate.postForObject("http://booking-service/rest/booking/create", bookingServiceRequestDTO,
-            BookingServiceResponseDTO.class);
+        BookingCommand bookingCommand = new BookingCommand(bookingServiceRequestDTO, restTemplate);
+        return bookingCommand.execute();
 
     }
 
-    private AddressDTO checkAddress(AddressDTO addressDTO) {
-        // Calling remote rest Service via Service Discovery Eureka
-        return restTemplate.postForObject("http://address-service/rest/address/validate", addressDTO, AddressDTO.class);
+    private Future<AddressResponseDTO> checkAddress(AddressDTO addressDTO) {
+        AddressCommand addressCommand = new AddressCommand(addressDTO, restTemplate);
+        return addressCommand.queue();
     }
 
-    private CustomerDTO checkCustomer(BookingRequestDTO bookingRequestDTO) {
+    private Future<CustomerResponseDTO> checkCustomer(BookingRequestDTO bookingRequestDTO) {
 
-        // Calling remote rest Service via Service Discovery Eureka
-        CustomerDTO customerDTO =
-            restTemplate.getForObject("http://customer-service/rest/customer/search/id?customerId={customerId}",
-                CustomerDTO.class, bookingRequestDTO.getCustomerId());
+        CustommerCommand custommerCommand = new CustommerCommand(bookingRequestDTO.getCustomerId(), restTemplate);
 
-        return customerDTO;
+        return custommerCommand.queue();
     }
 
     private AddressDTO exctractSenderAddress(BookingRequestDTO bookingRequestDTO) {

@@ -44,9 +44,9 @@
         <joda-time.version>2.9.7</joda-time.version>
         <etcd-client.version>0.34</etcd-client.version>
         <commons-configuration.version>1.10</commons-configuration.version>
+        <docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
         <!-- shared components -->
         <service-library.version>1.0</service-library.version>
-        <docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
     </properties>
 
 
@@ -115,6 +115,11 @@
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-server-ui</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-server-ui-hystrix</artifactId>
                 <version>${spring-boot-admin.version}</version>
             </dependency>
             <dependency>

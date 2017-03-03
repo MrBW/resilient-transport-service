@@ -1,6 +1,5 @@
 package de.codecentric.resilient.address;
 
-import de.codecentric.resilient.address.repository.AddressRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -8,10 +7,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.sleuth.Sampler;
+import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import de.codecentric.resilient.address.entity.Address;
+import de.codecentric.resilient.address.repository.AddressRepository;
 import de.codecentric.resilient.configuration.ArchaiusConfiguration;
 
 /**
@@ -22,6 +24,11 @@ import de.codecentric.resilient.configuration.ArchaiusConfiguration;
 @Import(ArchaiusConfiguration.class)
 @EntityScan(basePackageClasses = {AddressServiceApplication.class, Jsr310JpaConverters.class})
 public class AddressServiceApplication {
+
+    @Bean
+    public Sampler sampler() {
+        return new AlwaysSampler();
+    }
 
     private static final Logger log = LoggerFactory.getLogger(AddressServiceApplication.class);
 

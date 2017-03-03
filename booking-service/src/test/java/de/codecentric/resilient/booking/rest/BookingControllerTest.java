@@ -23,6 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class BookingControllerTest {
+    @Test
+    public void create1() throws Exception {
+
+    }
 
     private MockMvc mockMvc;
 

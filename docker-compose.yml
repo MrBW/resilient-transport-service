@@ -18,7 +18,7 @@ services:
      networks:
              - servicenet
      depends_on:
-             - eureka-server
+             - eureka-service
 
   spring-boot-admin:
      image: transport-service/spring-boot-admin
@@ -27,7 +27,7 @@ services:
      networks:
              - servicenet
      depends_on:
-             - eureka-server
+             - eureka-service
 
   address-service:
        image: transport-service/address-service
@@ -35,7 +35,7 @@ services:
        networks:
                - servicenet
        depends_on:
-               - eureka-server
+               - eureka-service
 
   customer-service:
          image: transport-service/customer-service
@@ -43,7 +43,7 @@ services:
          networks:
                  - servicenet
          depends_on:
-                 - eureka-server
+                 - eureka-service
 
   booking-service:
          image: transport-service/booking-service
@@ -51,7 +51,7 @@ services:
          networks:
                  - servicenet
          depends_on:
-                 - eureka-server
+                 - eureka-service
   transport-api-gateway:
          image: transport-service/transport-api-gateway
          ports:
@@ -59,7 +59,7 @@ services:
          networks:
                  - servicenet
          depends_on:
-                 - eureka-server
+                 - eureka-service
 
   zipkin-service:
          image: transport-service/zipkin-service
@@ -68,4 +68,11 @@ services:
          networks:
                 - servicenet
          depends_on:
-                - eureka-server
+                - eureka-service
+  etcd:
+        image: elcolio/etcd
+        command: -advertise-client-urls=http://0.0.0.0:2379 -listen-client-urls=http://0.0.0.0:2379
+        ports:
+          - "2379:2379"
+        networks:
+          - servicenet
