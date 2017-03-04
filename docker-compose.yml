@@ -47,6 +47,8 @@ services:
 
   booking-service:
          image: transport-service/booking-service
+         ports:
+                - "8082:8082"
 
          networks:
                  - servicenet
@@ -69,6 +71,17 @@ services:
                 - servicenet
          depends_on:
                 - eureka-service
+
+  hystrix-turbine-service:
+         image: transport-service/hystrix-turbine-dashboard
+         ports:
+                - "8989:8989"
+                - "8988:8080"
+                - "8987:8081"
+         networks:
+                - servicenet
+         depends_on:
+                - eureka-service
   etcd:
         image: elcolio/etcd
         command: -advertise-client-urls=http://0.0.0.0:2379 -listen-client-urls=http://0.0.0.0:2379
@@ -76,3 +89,10 @@ services:
           - "2379:2379"
         networks:
           - servicenet
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+        - servicenet

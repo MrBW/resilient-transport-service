@@ -19,14 +19,8 @@
         <module>booking-service</module>
         <module>transport-api-gateway</module>
         <module>zipkin-service</module>
+        <module>hystrix-turbine-dashboard</module>
     </modules>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
 
     <properties>
         <!--Docker Container Image Prefix -->
@@ -47,7 +41,15 @@
         <docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
         <!-- shared components -->
         <service-library.version>1.0</service-library.version>
+        <spring-cloud-netflix-turbine-amqp.version>1.0.7.RELEASE</spring-cloud-netflix-turbine-amqp.version>
     </properties>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.3.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
 
 
     <build>
@@ -102,6 +104,7 @@
                 <artifactId>spring-boot-starter-actuator</artifactId>
                 <version>${spring-boot-starter.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-starter-client</artifactId>

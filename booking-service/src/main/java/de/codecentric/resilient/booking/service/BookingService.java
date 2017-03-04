@@ -5,6 +5,8 @@ import java.util.Date;
 import de.codecentric.resilient.booking.entity.Booking;
 import de.codecentric.resilient.booking.mapper.BookingMapper;
 import de.codecentric.resilient.booking.repository.BookingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +22,8 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
  */
 @Service
 public class BookingService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
 
     private final BookingRepository bookingRepository;
 
@@ -54,14 +58,17 @@ public class BookingService {
 
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackGetConnote")
+    @HystrixCommand(groupKey = "ConnoteServiceClientGroup", fallbackMethod = "fallbackGetConnote")
     private ConnoteDTO receiveConnote() {
+        LOGGER.debug("Starting getConnote  (1)");
+
         return getConnoteDTO();
     }
 
-    @HystrixCommand(fallbackMethod = "fallbackGetConnoteFinal")
+    @HystrixCommand(groupKey = "ConnoteServiceClientGroup", fallbackMethod = "fallbackGetConnoteFinal")
     private ConnoteDTO fallbackGetConnote() {
 
+        LOGGER.debug("Fallback - Starting getConnote  (2)");
         return getConnoteDTO();
 
     }

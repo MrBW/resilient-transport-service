@@ -69,11 +69,11 @@ public class TransportApiGatewayController {
 
         } catch (InterruptedException e) {
             String msg = "Interrupted Exception -  while receive future";
-            LOGGER.error(msg, e);
+            LOGGER.debug(msg, e);
             return createBookingResponseFallback(msg, e);
         } catch (ExecutionException e) {
             String msg = "Execution Exception -  while receive future";
-            LOGGER.error(msg, e);
+            LOGGER.debug(msg, e);
             return createBookingResponseFallback(msg, e);
         }
 
