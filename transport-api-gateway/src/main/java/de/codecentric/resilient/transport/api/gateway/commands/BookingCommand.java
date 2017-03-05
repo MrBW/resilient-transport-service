@@ -1,5 +1,6 @@
 package de.codecentric.resilient.transport.api.gateway.commands;
 
+import com.netflix.hystrix.HystrixCommandKey;
 import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
@@ -16,7 +17,10 @@ public class BookingCommand extends HystrixCommand<BookingServiceResponseDTO> {
     private final RestTemplate restTemplate;
 
     public BookingCommand(BookingServiceRequestDTO bookingServiceRequestDTO, RestTemplate restTemplate) {
-        super(HystrixCommandGroupKey.Factory.asKey("BookingServiceClientGroup"));
+        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("BookingServiceClientGroup"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey("BookingServiceClient")));
+
+
         this.bookingServiceRequestDTO = bookingServiceRequestDTO;
         this.restTemplate = restTemplate;
     }
@@ -32,7 +36,11 @@ public class BookingCommand extends HystrixCommand<BookingServiceResponseDTO> {
 
         BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
         bookingServiceResponseDTO.setFallback(true);
-        bookingServiceResponseDTO.setErrorMsg("Error:" + getFailedExecutionException().getMessage());
+        if (getFailedExecutionException() == null)
+            bookingServiceResponseDTO.setErrorMsg("Error: unable to create booking");
+        else
+            bookingServiceResponseDTO
+                .setErrorMsg("Error: unable to create booking - " + getFailedExecutionException().getMessage());
         return bookingServiceResponseDTO;
     }
 }

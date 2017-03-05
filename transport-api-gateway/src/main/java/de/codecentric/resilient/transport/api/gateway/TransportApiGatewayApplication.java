@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import de.codecentric.resilient.configuration.ArchaiusConfiguration;
-import de.codecentric.resilient.transport.api.gateway.config.Configuration;
+import de.codecentric.resilient.configuration.Configuration;
 
 /**
  * Transport Api Gateway

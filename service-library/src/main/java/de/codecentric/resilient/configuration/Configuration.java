@@ -1,4 +1,4 @@
-package de.codecentric.resilient.transport.api.gateway.config;
+package de.codecentric.resilient.configuration;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;

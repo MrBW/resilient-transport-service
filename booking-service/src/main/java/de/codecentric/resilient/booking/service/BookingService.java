@@ -1,21 +1,18 @@
 package de.codecentric.resilient.booking.service;
 
 import java.util.Date;
-
-import de.codecentric.resilient.booking.entity.Booking;
-import de.codecentric.resilient.booking.mapper.BookingMapper;
-import de.codecentric.resilient.booking.repository.BookingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import de.codecentric.resilient.booking.commands.ConnoteCommand;
+import de.codecentric.resilient.booking.entity.Booking;
+import de.codecentric.resilient.booking.mapper.BookingMapper;
+import de.codecentric.resilient.booking.repository.BookingRepository;
 import de.codecentric.resilient.dto.BookingServiceRequestDTO;
 import de.codecentric.resilient.dto.BookingServiceResponseDTO;
 import de.codecentric.resilient.dto.ConnoteDTO;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 /**
  * @author Benjamin Wilms
@@ -29,13 +26,13 @@ public class BookingService {
 
     private final BookingMapper bookingMapper;
 
-    private final EurekaClient discoveryClient;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository, BookingMapper bookingMapper, EurekaClient discoveryClient) {
+    public BookingService(BookingRepository bookingRepository, BookingMapper bookingMapper, RestTemplate restTemplate) {
         this.bookingRepository = bookingRepository;
         this.bookingMapper = bookingMapper;
-        this.discoveryClient = discoveryClient;
+        this.restTemplate = restTemplate;
     }
 
     public BookingServiceResponseDTO createBooking(BookingServiceRequestDTO bookingRequestDTO) {
@@ -44,6 +41,12 @@ public class BookingService {
 
         // 1.) Create connote
         ConnoteDTO connoteDTO = receiveConnote();
+
+        if (connoteDTO.isFallback()) {
+            bookingResponseDTO.setErrorMsg("Unable to create Connote - " + connoteDTO.getErrorMsg());
+            bookingResponseDTO.setCreated(null);
+            return bookingResponseDTO;
+        }
 
         // 2. Save booking request
 
@@ -58,38 +61,16 @@ public class BookingService {
 
     }
 
-    @HystrixCommand(groupKey = "ConnoteServiceClientGroup", fallbackMethod = "fallbackGetConnote")
     private ConnoteDTO receiveConnote() {
         LOGGER.debug("Starting getConnote  (1)");
 
-        return getConnoteDTO();
-    }
+        ConnoteDTO connoteDTO = new ConnoteCommand(restTemplate).execute();
 
-    @HystrixCommand(groupKey = "ConnoteServiceClientGroup", fallbackMethod = "fallbackGetConnoteFinal")
-    private ConnoteDTO fallbackGetConnote() {
-
-        LOGGER.debug("Fallback - Starting getConnote  (2)");
-        return getConnoteDTO();
-
-    }
-
-    private ConnoteDTO fallbackGetConnoteFinal(Throwable throwable) {
-        ConnoteDTO connoteDTO = new ConnoteDTO();
-        connoteDTO.setConnote(null);
-        connoteDTO.setCreated(null);
-
-        // Exception wrapping
-        connoteDTO.setFallback(true);
-        connoteDTO.setErrorMsg(throwable == null ? "Error not reachable" : throwable.getMessage());
+        if (connoteDTO.isFallback()) {
+            LOGGER.debug("Fallback - Starting getConnote  (2)");
+            connoteDTO = new ConnoteCommand(restTemplate).execute();
+        }
 
         return connoteDTO;
-    }
-
-    private ConnoteDTO getConnoteDTO() {
-        InstanceInfo instanceInfo = discoveryClient.getNextServerFromEureka("CONNOTE-SERVICE", false);
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        return restTemplate.getForObject(instanceInfo.getHomePageUrl() + "rest/connote/create", ConnoteDTO.class);
     }
 }

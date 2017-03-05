@@ -3,6 +3,7 @@ package de.codecentric.resilient.transport.api.gateway.commands;
 import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import de.codecentric.resilient.dto.AddressDTO;
 import de.codecentric.resilient.dto.AddressResponseDTO;
 
@@ -16,7 +17,8 @@ public class AddressCommand extends HystrixCommand<AddressResponseDTO> {
     private final RestTemplate restTemplate;
 
     public AddressCommand(AddressDTO addressDTO, RestTemplate restTemplate) {
-        super(HystrixCommandGroupKey.Factory.asKey("AddressServiceClientGroup"));
+        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("AddressServiceClientGroup"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("AddressServiceClient")));
 
         this.addressDTO = addressDTO;
         this.restTemplate = restTemplate;
@@ -32,7 +34,10 @@ public class AddressCommand extends HystrixCommand<AddressResponseDTO> {
     protected AddressResponseDTO getFallback() {
         AddressResponseDTO addressResponseDTO = new AddressResponseDTO();
         addressResponseDTO.setFallback(true);
-        addressResponseDTO.setErrorMsg("Error:" + getFailedExecutionException().getMessage());
+        if (getFailedExecutionException() == null)
+            addressResponseDTO.setErrorMsg("Error: unable to validate address");
+        else
+            addressResponseDTO.setErrorMsg("Error: unable to validate address - " + getFailedExecutionException().getMessage());
 
         return addressResponseDTO;
     }

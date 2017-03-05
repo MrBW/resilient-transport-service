@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 networks:
   servicenet:
@@ -19,6 +19,8 @@ services:
              - servicenet
      depends_on:
              - eureka-service
+             - etcd
+             - rabbitmq
 
   spring-boot-admin:
      image: transport-service/spring-boot-admin
@@ -28,6 +30,8 @@ services:
              - servicenet
      depends_on:
              - eureka-service
+             - etcd
+             - rabbitmq
 
   address-service:
        image: transport-service/address-service
@@ -36,6 +40,8 @@ services:
                - servicenet
        depends_on:
                - eureka-service
+               - etcd
+               - rabbitmq
 
   customer-service:
          image: transport-service/customer-service
@@ -44,6 +50,8 @@ services:
                  - servicenet
          depends_on:
                  - eureka-service
+                 - etcd
+                 - rabbitmq
 
   booking-service:
          image: transport-service/booking-service
@@ -54,6 +62,8 @@ services:
                  - servicenet
          depends_on:
                  - eureka-service
+                 - etcd
+                 - rabbitmq
   transport-api-gateway:
          image: transport-service/transport-api-gateway
          ports:
@@ -61,7 +71,9 @@ services:
          networks:
                  - servicenet
          depends_on:
-                 - eureka-service
+                - eureka-service
+                - etcd
+                - rabbitmq
 
   zipkin-service:
          image: transport-service/zipkin-service
@@ -71,17 +83,20 @@ services:
                 - servicenet
          depends_on:
                 - eureka-service
+                - etcd
+                - rabbitmq
 
   hystrix-turbine-service:
          image: transport-service/hystrix-turbine-dashboard
          ports:
                 - "8989:8989"
                 - "8988:8080"
-                - "8987:8081"
          networks:
                 - servicenet
          depends_on:
                 - eureka-service
+                - etcd
+                - rabbitmq
   etcd:
         image: elcolio/etcd
         command: -advertise-client-urls=http://0.0.0.0:2379 -listen-client-urls=http://0.0.0.0:2379

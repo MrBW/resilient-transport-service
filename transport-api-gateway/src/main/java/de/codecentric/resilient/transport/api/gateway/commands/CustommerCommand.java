@@ -3,6 +3,7 @@ package de.codecentric.resilient.transport.api.gateway.commands;
 import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import de.codecentric.resilient.transport.api.gateway.dto.CustomerResponseDTO;
 
 /**
@@ -15,7 +16,8 @@ public class CustommerCommand extends HystrixCommand<CustomerResponseDTO> {
     private final RestTemplate restTemplate;
 
     public CustommerCommand(Long custommerId, RestTemplate restTemplate) {
-        super(HystrixCommandGroupKey.Factory.asKey("CustomerServiceClientGroup"));
+        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("CustomerServiceClientGroup"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("CustomerServiceClient")));
         this.custommerId = custommerId;
         this.restTemplate = restTemplate;
 
@@ -32,7 +34,10 @@ public class CustommerCommand extends HystrixCommand<CustomerResponseDTO> {
 
         CustomerResponseDTO customerReqResponseDTO = new CustomerResponseDTO();
         customerReqResponseDTO.setFallback(true);
-        customerReqResponseDTO.setErrorMsg("Error:" + getFailedExecutionException().getMessage());
+        if (getFailedExecutionException() == null)
+            customerReqResponseDTO.setErrorMsg("Error: unable to get customer");
+        else
+            customerReqResponseDTO.setErrorMsg("Error: unable to get customer - " + getFailedExecutionException().getMessage());
 
         return customerReqResponseDTO;
     }
