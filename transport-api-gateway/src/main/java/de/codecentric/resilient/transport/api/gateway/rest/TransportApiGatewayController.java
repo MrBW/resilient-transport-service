@@ -37,6 +37,37 @@ public class TransportApiGatewayController {
         this.bookingRequestMapper = bookingRequestMapper;
     }
 
+    @RequestMapping(value = "simulate", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> simulateBooking(@RequestParam(name = "ms") Long timer,
+            @RequestBody BookingRequestDTO bookingRequestDTO) {
+
+        if (timer == null) {
+            return new ResponseEntity<String>("Request-Param ms == null", HttpStatus.BAD_REQUEST);
+        } else {
+            long t = System.currentTimeMillis();
+            long end = t + timer;
+
+
+            LOGGER.debug(LOGGER.isDebugEnabled() ? "Starting booking simulator" : null);
+            while (System.currentTimeMillis() < end) {
+                try {
+
+                    executeBookingRequest(bookingRequestDTO);
+                    executeBookingRequest(bookingRequestDTO);
+
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Interrupted Timer Exception");
+                }
+            }
+
+            LOGGER.debug(LOGGER.isDebugEnabled() ? "Stopping booking simulator after " + timer + "ms" : null);
+
+            return new ResponseEntity<String>("Finished", HttpStatus.OK);
+        }
+    }
+
     @RequestMapping(value = "create", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<BookingServiceResponseDTO> create(@RequestBody BookingRequestDTO bookingRequestDTO,

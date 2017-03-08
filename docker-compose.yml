@@ -55,9 +55,6 @@ services:
 
   booking-service:
          image: transport-service/booking-service
-         ports:
-                - "8082:8082"
-
          networks:
                  - servicenet
          depends_on:

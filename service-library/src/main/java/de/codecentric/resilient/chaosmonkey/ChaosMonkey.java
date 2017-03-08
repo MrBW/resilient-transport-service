@@ -6,15 +6,41 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import com.netflix.config.DynamicBooleanProperty;
+import com.netflix.config.DynamicPropertyFactory;
 
 @Aspect
 @Component
+@Profile("chaos")
 public class ChaosMonkey {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChaosMonkey.class);
 
-    @Around("execution(* com.codecentric.workshop.hystrix.demo.service.ConnoteService.createConnoteChaos(..))")
+    private DynamicBooleanProperty chaosMonkey =
+        DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", true);
+
+    public ChaosMonkey() {
+
+        String chaosMonkeyStatus = chaosMonkey.get() ? "bad mood or evil" : "Eats bananas or sleeps" ;
+
+        LOGGER.info("\n\n---       Chaos Monkey       ---\n            __,__\n" +
+                "   .--.  .-\"     \"-.  .--.\n" +
+                "  / .. \\/  .-. .-.  \\/ .. \\\n" +
+                " | |  '|  /   Y   \\  |'  | |\n" +
+                " | \\   \\  \\ 0 | 0 /  /   / |\n" +
+                "  \\ '- ,\\.-\"`` ``\"-./, -' /\n" +
+                "   `'-' /_   ^ ^   _\\ '-'`\n" +
+                "       |  \\._   _./  |\n" +
+                "       \\   \\ `~` /   /\n" +
+                "        '._ '-=-' _.'\n" +
+                "           '~---~'\n" +
+                " Status: " + chaosMonkeyStatus +
+                "\n------------------------------------ -\n");
+    }
+
+    @Around("execution(* de.codecentric.resilient..*.*Service.*(..))")
     public Object createConnoteHystrix(ProceedingJoinPoint pjp) throws Throwable {
         LOGGER.debug(LOGGER.isDebugEnabled() ? "After Connote Service Call: createConnoteChaos()" : null);
 
@@ -24,21 +50,23 @@ public class ChaosMonkey {
     }
 
     private void chaosMonkey() {
-        // Trouble?
-        int troubleRand = RandomUtils.nextInt(0, 10);
-        int exceptionRand = RandomUtils.nextInt(0, 10);
+        if (chaosMonkey.get()) {
+            // Trouble?
+            int troubleRand = RandomUtils.nextInt(0, 10);
+            int exceptionRand = RandomUtils.nextInt(0, 10);
 
-        if (troubleRand > 3) {
-            LOGGER.debug("Chaos Monkey - generates trouble");
-            // Timeout or Exception?
-            if (exceptionRand < 5) {
-                LOGGER.debug("Chaos Monkey - timeout");
-                // Timeout
-                generateTimeout();
-            } else {
-                LOGGER.debug("Chaos Monkey - exception");
-                // Exception
-                throw new RuntimeException("Chaos Monkey - RuntimeException");
+            if (troubleRand > 3) {
+                LOGGER.debug("Chaos Monkey - generates trouble");
+                // Timeout or Exception?
+                if (exceptionRand < 5) {
+                    LOGGER.debug("Chaos Monkey - timeout");
+                    // Timeout
+                    generateTimeout();
+                } else {
+                    LOGGER.debug("Chaos Monkey - exception");
+                    // Exception
+                    throw new RuntimeException("Chaos Monkey - RuntimeException");
+                }
             }
         }
     }

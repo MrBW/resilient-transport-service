@@ -2,6 +2,8 @@
 
 baseurl=http://localhost:2379/v2/keys/hystrix
 
+# curl -L -X PUT http://localhost:2379/v2/keys/hystrix/chaos.monkey.active -d value="true"
+
 echo --- remove hystrix keys from etcd server ---
 curl -L -X DELETE $baseurl?recursive=true
 

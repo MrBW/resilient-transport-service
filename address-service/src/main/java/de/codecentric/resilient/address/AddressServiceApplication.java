@@ -1,7 +1,10 @@
 package de.codecentric.resilient.address;
 
+import com.netflix.config.DynamicBooleanProperty;
+import de.codecentric.resilient.chaosmonkey.ChaosMonkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +15,7 @@ import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import com.netflix.config.DynamicPropertyFactory;
 import de.codecentric.resilient.address.entity.Address;
 import de.codecentric.resilient.address.repository.AddressRepository;
 import de.codecentric.resilient.configuration.ArchaiusConfiguration;
@@ -52,6 +56,7 @@ public class AddressServiceApplication {
             repository.save(new Address("DE", "Stuttgart", "70563", "Curiesstraße", "2"));
 
             log.info("### Address count:" + repository.count());
+
         };
     }
 }
