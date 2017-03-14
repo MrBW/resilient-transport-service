@@ -23,7 +23,7 @@ public class ChaosMonkey {
         DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", false);
 
     private DynamicIntProperty chaosMonkeyLevel =
-            DynamicPropertyFactory.getInstance().getIntProperty("chaos.monkey.level", 3);
+            DynamicPropertyFactory.getInstance().getIntProperty("chaos.monkey.level", 5);
 
     public ChaosMonkey() {
 
@@ -59,10 +59,10 @@ public class ChaosMonkey {
             int troubleRand = RandomUtils.nextInt(0, 10);
             int exceptionRand = RandomUtils.nextInt(0, 10);
 
-            if (troubleRand > 5) {
+            if (troubleRand > chaosMonkeyLevel.get()) {
                 LOGGER.debug("Chaos Monkey - generates trouble");
                 // Timeout or Exception?
-                if (exceptionRand < 5) {
+                if (exceptionRand < 7) {
                     LOGGER.debug("Chaos Monkey - timeout");
                     // Timeout
                     generateTimeout();

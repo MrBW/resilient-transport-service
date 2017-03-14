@@ -81,13 +81,35 @@ public class BookingService {
 
         bookingServiceResponseDTO.setServiceResponseStatusList(new ArrayList<>());
 
-        bookingServiceResponseDTO.getServiceResponseStatusList().add(new ServiceResponseStatus("address-service > sender",
-            senderAddressDTO.isFallback() ? "ERROR" : "OK", senderAddressDTO.getErrorMsg(), senderAddressDTO.getInstance()));
+        //@formatter:off
+        if(bookingServiceResponseDTO.getConnoteDTO() == null) {
+            bookingServiceResponseDTO.getServiceResponseStatusList()
+                        .add(new ServiceResponseStatus("connote-service","ERROR","No Response", null));
+        } else {
+                bookingServiceResponseDTO.getServiceResponseStatusList()
+                    .add(new ServiceResponseStatus("connote-service",
+                            bookingServiceResponseDTO.getConnoteDTO().isFallback() ? "ERROR" : "OK",
+                            bookingServiceResponseDTO.getConnoteDTO().getErrorMsg(),
+                            bookingServiceResponseDTO.getConnoteDTO().getInstance()));
+                }
+
         bookingServiceResponseDTO.getServiceResponseStatusList()
-            .add(new ServiceResponseStatus("address-service > receiver", receiverAddressDTO.isFallback() ? "ERROR" : "OK",
-                receiverAddressDTO.getErrorMsg(), receiverAddressDTO.getInstance()));
-        bookingServiceResponseDTO.getServiceResponseStatusList().add(new ServiceResponseStatus("customer-service",
-            customerDTO.isFallback() ? "ERROR" : "OK", customerDTO.getErrorMsg(), customerDTO.getInstance()));
+                .add(new ServiceResponseStatus("address-service > sender",
+                        senderAddressDTO.isFallback() ? "ERROR" : "OK",
+                        senderAddressDTO.getErrorMsg(),
+                        senderAddressDTO.getInstance()));
+        bookingServiceResponseDTO.getServiceResponseStatusList()
+                .add(new ServiceResponseStatus("address-service > receiver",
+                        receiverAddressDTO.isFallback() ? "ERROR" : "OK",
+                        receiverAddressDTO.getErrorMsg(),
+                        receiverAddressDTO.getInstance()));
+        bookingServiceResponseDTO.getServiceResponseStatusList()
+                .add(new ServiceResponseStatus("customer-service",
+                        customerDTO.isFallback() ? "ERROR" : "OK",
+                        customerDTO.getErrorMsg(),
+                        customerDTO.getInstance()));
+
+        //@formatter:on
     }
 
     public BookingServiceResponseDTO executeBookingRequest(BookingRequestDTO bookingRequestDTO) {
