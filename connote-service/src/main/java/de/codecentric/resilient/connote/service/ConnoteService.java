@@ -41,7 +41,6 @@ public class ConnoteService {
 
         ConnoteDTO connoteDTO = new ConnoteDTO();
         connoteDTO.setConnote(connoteSaved.getConnote());
-        connoteDTO.setCreated(connoteSaved.getCreated().toDate());
 
         return connoteDTO;
 

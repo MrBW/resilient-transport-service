@@ -1,12 +1,10 @@
 package de.codecentric.resilient.booking.mapper;
 
+import de.codecentric.resilient.dto.*;
 import org.springframework.stereotype.Component;
 import de.codecentric.resilient.booking.entity.Address;
 import de.codecentric.resilient.booking.entity.Booking;
 import de.codecentric.resilient.booking.entity.Customer;
-import de.codecentric.resilient.dto.AddressDTO;
-import de.codecentric.resilient.dto.BookingServiceRequestDTO;
-import de.codecentric.resilient.dto.CustomerDTO;
 
 /**
  * @author Benjamin Wilms (xd98870)
@@ -24,7 +22,7 @@ public class BookingMapper {
         return booking;
     }
 
-    public Customer mapToCustomer(CustomerDTO customerDTO) {
+    public Customer mapToCustomer(CustomerResponseDTO customerDTO) {
         Customer customer = new Customer();
         customer.setCustomerName(customerDTO.getCustomerName());
         customer.setCustomerId(customerDTO.getCustomerId());
@@ -32,7 +30,7 @@ public class BookingMapper {
         return customer;
     }
 
-    public Address mapToAddressEntity(AddressDTO addressDTO) {
+    public Address mapToAddressEntity(AddressResponseDTO addressDTO) {
 
         Address address = new Address();
         address.setStreet(addressDTO.getStreet());

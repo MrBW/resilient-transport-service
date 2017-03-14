@@ -31,7 +31,7 @@ public class ConnoteController {
         LOGGER.debug(LOGGER.isDebugEnabled() ? "Create new connote" : null);
 
         ConnoteDTO connote = connoteService.createConnote();
-        connote.setInstance(request.getLocalName() + " : " + request.getLocalPort());
+        connote.setInstance(request.getLocalAddr() + " : " + request.getLocalPort());
 
         return connote;
     }

@@ -1,5 +1,6 @@
 package de.codecentric.resilient.chaosmonkey;
 
+import com.netflix.config.DynamicIntProperty;
 import org.apache.commons.lang3.RandomUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -19,7 +20,10 @@ public class ChaosMonkey {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChaosMonkey.class);
 
     private DynamicBooleanProperty chaosMonkey =
-        DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", true);
+        DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", false);
+
+    private DynamicIntProperty chaosMonkeyLevel =
+            DynamicPropertyFactory.getInstance().getIntProperty("chaos.monkey.level", 3);
 
     public ChaosMonkey() {
 
@@ -55,7 +59,7 @@ public class ChaosMonkey {
             int troubleRand = RandomUtils.nextInt(0, 10);
             int exceptionRand = RandomUtils.nextInt(0, 10);
 
-            if (troubleRand > 3) {
+            if (troubleRand > 5) {
                 LOGGER.debug("Chaos Monkey - generates trouble");
                 // Timeout or Exception?
                 if (exceptionRand < 5) {

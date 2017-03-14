@@ -1,10 +1,6 @@
 package de.codecentric.resilient.customer.rest;
 
 import javax.servlet.http.HttpServletRequest;
-
-import de.codecentric.resilient.customer.entity.Customer;
-import de.codecentric.resilient.customer.service.CustomerService;
-import de.codecentric.resilient.customer.exception.CustomerNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import de.codecentric.resilient.customer.entity.Customer;
+import de.codecentric.resilient.customer.exception.CustomerNotFoundException;
+import de.codecentric.resilient.customer.service.CustomerService;
 import de.codecentric.resilient.dto.CustomerDTO;
 
 /**
@@ -41,7 +40,7 @@ public class CustomerController {
         }
 
         CustomerDTO customerDTO = mapToCustomerDTO(customer);
-        customerDTO.setInstance(request.getLocalName() + " : " + request.getLocalPort());
+        customerDTO.setInstance(request.getLocalAddr() + " : " + request.getLocalPort());
 
         return new ResponseEntity<>(customerDTO, HttpStatus.FOUND);
 

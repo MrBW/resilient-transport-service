@@ -1,22 +1,21 @@
 package de.codecentric.resilient.transport.api.gateway.rest;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletRequest;
+
+import de.codecentric.resilient.transport.api.gateway.async.AsyncBooking;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import de.codecentric.resilient.dto.*;
-import de.codecentric.resilient.transport.api.gateway.commands.AddressCommand;
-import de.codecentric.resilient.transport.api.gateway.commands.BookingCommand;
-import de.codecentric.resilient.transport.api.gateway.commands.CustommerCommand;
+import de.codecentric.resilient.dto.BookingServiceResponseDTO;
 import de.codecentric.resilient.transport.api.gateway.dto.BookingRequestDTO;
-import de.codecentric.resilient.transport.api.gateway.dto.CustomerResponseDTO;
-import de.codecentric.resilient.transport.api.gateway.mapper.BookingRequestMapper;
+import de.codecentric.resilient.transport.api.gateway.service.BookingService;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @author Benjamin Wilms
@@ -27,44 +26,34 @@ public class TransportApiGatewayController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportApiGatewayController.class);
 
-    private final RestTemplate restTemplate;
-
-    private final BookingRequestMapper bookingRequestMapper;
+    private final BookingService bookingService;
+    private final AsyncBooking asyncBooking;
 
     @Autowired
-    public TransportApiGatewayController(RestTemplate restTemplate, BookingRequestMapper bookingRequestMapper) {
-        this.restTemplate = restTemplate;
-        this.bookingRequestMapper = bookingRequestMapper;
+    public TransportApiGatewayController(BookingService bookingService, AsyncBooking asyncBooking) {
+        this.bookingService = bookingService;
+        this.asyncBooking = asyncBooking;
     }
 
     @RequestMapping(value = "simulate", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> simulateBooking(@RequestParam(name = "ms") Long timer,
+    public ResponseEntity<String> simulateBooking(@RequestParam(name = "ms") Integer timer,
             @RequestBody BookingRequestDTO bookingRequestDTO) {
 
         if (timer == null) {
             return new ResponseEntity<String>("Request-Param ms == null", HttpStatus.BAD_REQUEST);
         } else {
-            long t = System.currentTimeMillis();
-            long end = t + timer;
-
-
-            LOGGER.debug(LOGGER.isDebugEnabled() ? "Starting booking simulator" : null);
-            while (System.currentTimeMillis() < end) {
-                try {
-
-                    executeBookingRequest(bookingRequestDTO);
-                    executeBookingRequest(bookingRequestDTO);
-
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    LOGGER.error("Interrupted Timer Exception");
-                }
-            }
+            asyncBooking.createAsyncRequest(timer, bookingRequestDTO);
 
             LOGGER.debug(LOGGER.isDebugEnabled() ? "Stopping booking simulator after " + timer + "ms" : null);
 
-            return new ResponseEntity<String>("Finished", HttpStatus.OK);
+            Calendar runningUntil = Calendar.getInstance();
+            runningUntil.add(Calendar.MILLISECOND, timer);
+
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
+
+            return new ResponseEntity<String>("Runs until > " + dateFormatter.format(runningUntil.getTime()), HttpStatus.OK);
         }
     }
 
@@ -75,89 +64,15 @@ public class TransportApiGatewayController {
 
         LOGGER.debug(LOGGER.isDebugEnabled() ? "Booking Request: " + bookingRequestDTO.toString() : null);
 
-        BookingServiceResponseDTO responseDTO = executeBookingRequest(bookingRequestDTO);
+        BookingServiceResponseDTO responseDTO = bookingService.executeBookingRequest(bookingRequestDTO);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
-    }
-
-    private BookingServiceResponseDTO executeBookingRequest(@RequestBody BookingRequestDTO bookingRequestDTO) {
-        // 1.) check customer
-        Future<CustomerResponseDTO> customerRequestFuture = checkCustomer(bookingRequestDTO);
-
-        // 2.) check sender address
-        Future<AddressResponseDTO> senderAddressFuture = checkAddress(exctractSenderAddress(bookingRequestDTO));
-
-        // 3.) check receiver address
-        Future<AddressResponseDTO> receiverAddressFuture = checkAddress(exctractReceiverAddress(bookingRequestDTO));
-
-        CustomerDTO customerDTO = null;
-        AddressDTO addressSenderDTO = null;
-        AddressDTO addressReceiverDTO = null;
-        try {
-            customerDTO = bookingRequestMapper.mapCustomerResponseToCustomerDTO(customerRequestFuture.get());
-            addressSenderDTO = bookingRequestMapper.mapAddressResponseToAddressDTO(senderAddressFuture.get());
-            addressReceiverDTO = bookingRequestMapper.mapAddressResponseToAddressDTO(receiverAddressFuture.get());
-
-        } catch (InterruptedException e) {
-            String msg = "Interrupted Exception -  while receive future";
-            LOGGER.debug(msg, e);
-            return createBookingResponseFallback(msg, e);
-        } catch (ExecutionException e) {
-            String msg = "Execution Exception -  while receive future";
-            LOGGER.debug(msg, e);
-            return createBookingResponseFallback(msg, e);
-        }
-
-        // 4.) create booking with
-        return createBookingRequest(customerDTO, addressSenderDTO, addressReceiverDTO);
-    }
-
-    private BookingServiceResponseDTO createBookingResponseFallback(String msg, Exception e) {
-
-        BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
-        bookingServiceResponseDTO.setErrorMsg(msg + ": " + e.getMessage());
-        return bookingServiceResponseDTO;
     }
 
     @RequestMapping(value = "generate")
     public ResponseEntity<BookingRequestDTO> generate(HttpServletRequest request) {
 
         return new ResponseEntity<>(new BookingRequestDTO(), HttpStatus.OK);
-    }
-
-    private BookingServiceResponseDTO createBookingRequest(CustomerDTO customerDTO, AddressDTO senderAddressDTO,
-            AddressDTO receiverAddressDTO) {
-
-        BookingServiceRequestDTO bookingServiceRequestDTO =
-            bookingRequestMapper.mapBookingRequestToBookingServiceRequest(customerDTO, senderAddressDTO, receiverAddressDTO);
-
-        BookingCommand bookingCommand = new BookingCommand(bookingServiceRequestDTO, restTemplate);
-        return bookingCommand.execute();
-
-    }
-
-    private Future<AddressResponseDTO> checkAddress(AddressDTO addressDTO) {
-        AddressCommand addressCommand = new AddressCommand(addressDTO, restTemplate);
-        return addressCommand.queue();
-    }
-
-    private Future<CustomerResponseDTO> checkCustomer(BookingRequestDTO bookingRequestDTO) {
-
-        CustommerCommand custommerCommand = new CustommerCommand(bookingRequestDTO.getCustomerId(), restTemplate);
-
-        return custommerCommand.queue();
-    }
-
-    private AddressDTO exctractSenderAddress(BookingRequestDTO bookingRequestDTO) {
-        return new AddressDTO(bookingRequestDTO.getSenderCountry(), bookingRequestDTO.getSenderCity(),
-            bookingRequestDTO.getSenderPostcode(), bookingRequestDTO.getSenderStreet(),
-            bookingRequestDTO.getSenderStreetNumber());
-    }
-
-    private AddressDTO exctractReceiverAddress(BookingRequestDTO bookingRequestDTO) {
-        return new AddressDTO(bookingRequestDTO.getReceiverCountry(), bookingRequestDTO.getReceiverCity(),
-            bookingRequestDTO.getReceiverPostcode(), bookingRequestDTO.getReceiverStreet(),
-            bookingRequestDTO.getReceiverStreetNumber());
     }
 
 }

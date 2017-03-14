@@ -10,6 +10,10 @@ curl -L -X DELETE $baseurl?recursive=true
 # Chaos Monkey
 curl -L -X PUT $baseurl/chaos.monkey.active -d value="false"
 curl -L -X PUT $baseurl/chaos.monkey.timeout -d value="3000"
+curl -L -X PUT $baseurl/chaos.monkey.level -d value="5"
+
+# Service Call - enable second call
+curl -L -X PUT $baseurl/second.service.call -d value="false"
 
 # Transport Service Hystrix Timeouts
 curl -L -X PUT $baseurl/hystrix.command.AddressServiceClient.execution.isolation.thread.timeoutInMilliseconds -d value="1000"

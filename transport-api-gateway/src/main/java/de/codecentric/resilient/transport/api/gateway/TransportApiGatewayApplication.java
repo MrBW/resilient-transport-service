@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import de.codecentric.resilient.configuration.ArchaiusConfiguration;
 import de.codecentric.resilient.configuration.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Transport Api Gateway
@@ -20,6 +21,7 @@ import de.codecentric.resilient.configuration.Configuration;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableCircuitBreaker
+@EnableAsync
 @Import(value = {Configuration.class, ArchaiusConfiguration.class})
 @EntityScan(basePackageClasses = {TransportApiGatewayApplication.class, Jsr310JpaConverters.class})
 public class TransportApiGatewayApplication {

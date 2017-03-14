@@ -6,33 +6,33 @@ package de.codecentric.resilient.dto;
  */
 public class BookingServiceRequestDTO extends AbstractDTO {
 
-    private CustomerDTO customerDTO;
+    private CustomerResponseDTO customerDTO;
 
-    private AddressDTO senderAddress;
+    private AddressResponseDTO senderAddress;
 
-    private AddressDTO receiverAddress;
+    private AddressResponseDTO receiverAddress;
 
-    public CustomerDTO getCustomerDTO() {
+    public CustomerResponseDTO getCustomerDTO() {
         return customerDTO;
     }
 
-    public void setCustomerDTO(CustomerDTO customerDTO) {
+    public void setCustomerDTO(CustomerResponseDTO customerDTO) {
         this.customerDTO = customerDTO;
     }
 
-    public AddressDTO getSenderAddress() {
+    public AddressResponseDTO getSenderAddress() {
         return senderAddress;
     }
 
-    public void setSenderAddress(AddressDTO senderAddress) {
+    public void setSenderAddress(AddressResponseDTO senderAddress) {
         this.senderAddress = senderAddress;
     }
 
-    public AddressDTO getReceiverAddress() {
+    public AddressResponseDTO getReceiverAddress() {
         return receiverAddress;
     }
 
-    public void setReceiverAddress(AddressDTO receiverAddress) {
+    public void setReceiverAddress(AddressResponseDTO receiverAddress) {
         this.receiverAddress = receiverAddress;
     }
 
@@ -40,8 +40,8 @@ public class BookingServiceRequestDTO extends AbstractDTO {
     public String toString() {
         final StringBuilder sb = new StringBuilder("BookingServiceRequestDTO{");
         sb.append("customerDTO=").append(customerDTO);
-        sb.append(", senderAddress=").append(senderAddress.toString());
-        sb.append(", receiverAddress=").append(receiverAddress.toString());
+        sb.append(", senderAddress=").append(senderAddress);
+        sb.append(", receiverAddress=").append(receiverAddress);
         sb.append('}');
         return sb.toString();
     }

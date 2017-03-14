@@ -10,9 +10,7 @@ import de.codecentric.resilient.booking.commands.ConnoteCommand;
 import de.codecentric.resilient.booking.entity.Booking;
 import de.codecentric.resilient.booking.mapper.BookingMapper;
 import de.codecentric.resilient.booking.repository.BookingRepository;
-import de.codecentric.resilient.dto.BookingServiceRequestDTO;
-import de.codecentric.resilient.dto.BookingServiceResponseDTO;
-import de.codecentric.resilient.dto.ConnoteDTO;
+import de.codecentric.resilient.dto.*;
 
 /**
  * @author Benjamin Wilms
@@ -54,7 +52,8 @@ public class BookingService {
         bookingRepository.save(booking);
 
         bookingResponseDTO.setCreated(new Date());
-        bookingResponseDTO.setCustomerDTO(bookingRequestDTO.getCustomerDTO());
+        CustomerResponseDTO customerDTO = bookingRequestDTO.getCustomerDTO();
+        bookingResponseDTO.setCustomerDTO(new CustomerDTO(customerDTO.getCustomerId(), customerDTO.getCustomerName()));
         bookingResponseDTO.setConnoteDTO(connoteDTO);
 
         return bookingResponseDTO;

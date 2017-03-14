@@ -1,7 +1,6 @@
-package de.codecentric.resilient.transport.api.gateway.dto;
+package de.codecentric.resilient.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.codecentric.resilient.dto.FallbackAbstractDTO;
 
 /**
  * @author Benjamin Wilms

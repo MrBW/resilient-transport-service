@@ -63,9 +63,9 @@ public class BookingControllerTest {
         //@formatter:on
     }
 
-    private AddressDTO createAddress() {
+    private AddressResponseDTO createAddress() {
 
-        AddressDTO addressDTO = new AddressDTO();
+        AddressResponseDTO addressDTO = new AddressResponseDTO();
         addressDTO.setStreet("Hochstraße");
         addressDTO.setStreetNumber("11");
         addressDTO.setCity("Solingen");
@@ -74,8 +74,8 @@ public class BookingControllerTest {
         return addressDTO;
     }
 
-    private CustomerDTO createCustomerDTO() {
-        return new CustomerDTO(1L, "Meier");
+    private CustomerResponseDTO createCustomerDTO() {
+        return new CustomerResponseDTO(1L, "Meier");
 
     }
 

@@ -1,13 +1,12 @@
 package de.codecentric.resilient.address.rest;
 
 import javax.servlet.http.HttpServletRequest;
-
-import de.codecentric.resilient.address.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import de.codecentric.resilient.address.entity.Address;
+import de.codecentric.resilient.address.service.AddressService;
 import de.codecentric.resilient.dto.AddressDTO;
 
 /**
@@ -40,26 +39,17 @@ public class AddressController {
         }
 
         AddressDTO adressDTO = mapToAdressDTO(address);
-        addressDTO.setInstance(request.getLocalName() + " : " + request.getLocalPort());
+        addressDTO.setInstance(request.getLocalAddr() + " : " + request.getLocalPort());
 
         return new ResponseEntity<>(adressDTO, HttpStatus.FOUND);
 
-    }
-
-    @RequestMapping(value = "validate/params", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<AddressDTO> validateAdressRequestParams(@RequestParam("country") String country,
-            @RequestParam("city") String city, @RequestParam("postcode") String postcode, @RequestParam("street") String street,
-            @RequestParam("streetnumber") String streetNumber, HttpServletRequest request) {
-
-        return validateAdress(new AddressDTO(country, city, postcode, street, streetNumber), request);
     }
 
     @RequestMapping(value = "generate")
     @ResponseBody
     public ResponseEntity<AddressDTO> addressDTO(HttpServletRequest request) {
 
-        return new ResponseEntity<>(new AddressDTO("","","","",""), HttpStatus.OK);
+        return new ResponseEntity<>(new AddressDTO("", "", "", "", ""), HttpStatus.OK);
     }
 
     /***
