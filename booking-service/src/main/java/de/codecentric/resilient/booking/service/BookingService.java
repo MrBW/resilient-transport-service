@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.netflix.config.DynamicBooleanProperty;
+import com.netflix.config.DynamicPropertyFactory;
 import de.codecentric.resilient.booking.commands.ConnoteCommand;
 import de.codecentric.resilient.booking.entity.Booking;
 import de.codecentric.resilient.booking.mapper.BookingMapper;
@@ -26,6 +28,9 @@ public class BookingService {
 
     private final RestTemplate restTemplate;
 
+    private DynamicBooleanProperty secondServiceCallEnabled =
+        DynamicPropertyFactory.getInstance().getBooleanProperty("second.service.call", false);
+
     @Autowired
     public BookingService(BookingRepository bookingRepository, BookingMapper bookingMapper, RestTemplate restTemplate) {
         this.bookingRepository = bookingRepository;
@@ -41,7 +46,7 @@ public class BookingService {
         ConnoteDTO connoteDTO = receiveConnote();
 
         if (connoteDTO.isFallback()) {
-            bookingResponseDTO.setErrorMsg("Unable to create Connote - " + connoteDTO.getErrorMsg());
+            bookingResponseDTO.setErrorMsg("Connote error: " + connoteDTO.getErrorMsg());
             bookingResponseDTO.setCreated(null);
             return bookingResponseDTO;
         }
@@ -61,15 +66,8 @@ public class BookingService {
     }
 
     private ConnoteDTO receiveConnote() {
-        LOGGER.debug("Starting getConnote  (1)");
+        LOGGER.debug("Starting getConnote");
 
-        ConnoteDTO connoteDTO = new ConnoteCommand(restTemplate).execute();
-
-        if (connoteDTO.isFallback()) {
-            LOGGER.debug("Fallback - Starting getConnote  (2)");
-            connoteDTO = new ConnoteCommand(restTemplate).execute();
-        }
-
-        return connoteDTO;
+        return new ConnoteCommand(restTemplate, secondServiceCallEnabled.get()).execute();
     }
 }

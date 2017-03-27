@@ -61,7 +61,8 @@ public class BookingService {
 
             mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, bookingServiceResponseDTO);
 
-            bookingServiceResponseDTO.setFallback(false);
+            bookingServiceResponseDTO.setFallback(true);
+            bookingServiceResponseDTO.setErrorMsg("Invalid booking data");
 
             return bookingServiceResponseDTO;
         } else {
@@ -70,6 +71,14 @@ public class BookingService {
             BookingServiceResponseDTO bookingServiceResponseDTO = bookingCommand.execute();
 
             mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, bookingServiceResponseDTO);
+
+            if (bookingServiceResponseDTO.isFallback()) {
+                bookingServiceResponseDTO.setFallback(true);
+                bookingServiceResponseDTO.setErrorMsg("Unable to perform booking request");
+
+            } else {
+                bookingServiceResponseDTO.setFallback(false);
+            }
 
             return bookingServiceResponseDTO;
         }

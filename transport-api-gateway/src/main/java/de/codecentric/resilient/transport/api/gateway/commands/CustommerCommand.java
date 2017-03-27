@@ -47,13 +47,19 @@ public class CustommerCommand extends HystrixCommand<CustomerResponseDTO> {
 
             CustomerResponseDTO customerReqResponseDTO = new CustomerResponseDTO();
             customerReqResponseDTO.setFallback(true);
-            if (getFailedExecutionException() == null)
-                customerReqResponseDTO.setErrorMsg("Error: unable to get customer");
-            else
-                customerReqResponseDTO
-                    .setErrorMsg("Error: unable to get customer - " + getFailedExecutionException().getMessage());
 
-            return customerReqResponseDTO;
+            if (getExecutionException() != null) {
+                Exception exceptionFromThrowable = getExceptionFromThrowable(getExecutionException());
+                String errorMessage = (exceptionFromThrowable != null) ? exceptionFromThrowable.getMessage() : "";
+
+                customerReqResponseDTO.setErrorMsg("Error: " + errorMessage);
+                return customerReqResponseDTO;
+
+            } else {
+                customerReqResponseDTO.setErrorMsg("Error: unable to get customer");
+                return customerReqResponseDTO;
+            }
+
         }
     }
 }

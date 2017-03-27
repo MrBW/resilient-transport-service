@@ -5,6 +5,7 @@ package de.codecentric.resilient.dto;
  */
 public class FallbackAbstractDTO extends AbstractDTO {
 
+
     private boolean fallback;
 
     private String errorMsg;

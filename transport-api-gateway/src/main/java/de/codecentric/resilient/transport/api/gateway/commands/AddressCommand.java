@@ -51,13 +51,18 @@ public class AddressCommand extends HystrixCommand<AddressResponseDTO> {
 
             AddressResponseDTO addressResponseDTO = new AddressResponseDTO();
             addressResponseDTO.setFallback(true);
-            if (getFailedExecutionException() == null)
-                addressResponseDTO.setErrorMsg("Error: unable to validate address");
-            else
-                addressResponseDTO
-                    .setErrorMsg("Error: unable to validate address - " + getFailedExecutionException().getMessage());
 
-            return addressResponseDTO;
+            if (getExecutionException() != null) {
+                Exception exceptionFromThrowable = getExceptionFromThrowable(getExecutionException());
+                String errorMessage = (exceptionFromThrowable != null) ? exceptionFromThrowable.getMessage() : "";
+                addressResponseDTO.setErrorMsg("Error: " + errorMessage);
+                return addressResponseDTO;
+            } else {
+
+                addressResponseDTO.setErrorMsg("Error: unable to validate address");
+
+                return addressResponseDTO;
+            }
         }
     }
 }

@@ -49,12 +49,21 @@ public class BookingCommand extends HystrixCommand<BookingServiceResponseDTO> {
 
             BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
             bookingServiceResponseDTO.setFallback(true);
-            if (getFailedExecutionException() == null)
+
+            if (getExecutionException() != null) {
+                Exception exceptionFromThrowable = getExceptionFromThrowable(getExecutionException());
+                String errorMessage = (exceptionFromThrowable != null) ? exceptionFromThrowable.getMessage() : "";
+
+                bookingServiceResponseDTO.setErrorMsg("Error: " + errorMessage);
+                return bookingServiceResponseDTO;
+
+            } else {
+
                 bookingServiceResponseDTO.setErrorMsg("Error: unable to create booking");
-            else
-                bookingServiceResponseDTO
-                    .setErrorMsg("Error: unable to create booking - " + getFailedExecutionException().getMessage());
-            return bookingServiceResponseDTO;
+                return bookingServiceResponseDTO;
+            }
+
         }
+
     }
 }
