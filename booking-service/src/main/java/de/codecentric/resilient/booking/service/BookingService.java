@@ -47,7 +47,6 @@ public class BookingService {
 
         if (connoteDTO.isFallback()) {
             bookingResponseDTO.setErrorMsg("Connote error: " + connoteDTO.getErrorMsg());
-            bookingResponseDTO.setCreated(null);
             return bookingResponseDTO;
         }
 
@@ -56,7 +55,6 @@ public class BookingService {
         Booking booking = bookingMapper.mapToBookingEntity(bookingRequestDTO, connoteDTO.getConnote());
         bookingRepository.save(booking);
 
-        bookingResponseDTO.setCreated(new Date());
         CustomerResponseDTO customerDTO = bookingRequestDTO.getCustomerDTO();
         bookingResponseDTO.setCustomerDTO(new CustomerDTO(customerDTO.getCustomerId(), customerDTO.getCustomerName()));
         bookingResponseDTO.setConnoteDTO(connoteDTO);

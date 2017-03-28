@@ -15,6 +15,7 @@ import de.codecentric.resilient.transport.api.gateway.commands.AddressCommand;
 import de.codecentric.resilient.transport.api.gateway.commands.BookingCommand;
 import de.codecentric.resilient.transport.api.gateway.commands.CustommerCommand;
 import de.codecentric.resilient.transport.api.gateway.dto.BookingRequestDTO;
+import de.codecentric.resilient.transport.api.gateway.dto.TransportApiGatewayResponse;
 
 /**
  * @author Benjamin Wilms (xd98870)
@@ -48,8 +49,11 @@ public class BookingService {
         return custommerCommand.queue();
     }
 
-    private BookingServiceResponseDTO createBookingRequest(CustomerResponseDTO customerDTO, AddressResponseDTO senderAddressDTO,
-            AddressResponseDTO receiverAddressDTO) {
+    private TransportApiGatewayResponse createBookingRequest(CustomerResponseDTO customerDTO,
+            AddressResponseDTO senderAddressDTO, AddressResponseDTO receiverAddressDTO) {
+
+        // TODO: do-it-better
+        TransportApiGatewayResponse transportApiResponse = new TransportApiGatewayResponse();
 
         BookingServiceRequestDTO bookingServiceRequestDTO = new BookingServiceRequestDTO();
         bookingServiceRequestDTO.setReceiverAddress(receiverAddressDTO);
@@ -57,71 +61,85 @@ public class BookingService {
         bookingServiceRequestDTO.setCustomerDTO(customerDTO);
 
         if (customerDTO.isFallback() || senderAddressDTO.isFallback() || receiverAddressDTO.isFallback()) {
-            BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
 
-            mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, bookingServiceResponseDTO);
+            mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, null, transportApiResponse);
 
-            bookingServiceResponseDTO.setFallback(true);
-            bookingServiceResponseDTO.setErrorMsg("Invalid booking data");
+            transportApiResponse.setFallback(true);
+            transportApiResponse.setErrorMsg("Invalid booking data");
 
-            return bookingServiceResponseDTO;
+            return transportApiResponse;
         } else {
             BookingCommand bookingCommand =
                 new BookingCommand(bookingServiceRequestDTO, restTemplate, secondServiceCallEnabled.get());
             BookingServiceResponseDTO bookingServiceResponseDTO = bookingCommand.execute();
 
-            mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, bookingServiceResponseDTO);
+            mapAddressCustomerResponse(customerDTO, senderAddressDTO, receiverAddressDTO, bookingServiceResponseDTO,
+                transportApiResponse);
 
             if (bookingServiceResponseDTO.isFallback()) {
-                bookingServiceResponseDTO.setFallback(true);
-                bookingServiceResponseDTO.setErrorMsg("Unable to perform booking request");
+                transportApiResponse.setFallback(true);
+                transportApiResponse.setErrorMsg(bookingServiceResponseDTO.getErrorMsg());
 
             } else {
-                bookingServiceResponseDTO.setFallback(false);
+                transportApiResponse.setCustomerDTO(bookingServiceResponseDTO.getCustomerDTO());
+                transportApiResponse.setConnoteDTO(bookingServiceResponseDTO.getConnoteDTO());
+                transportApiResponse.setFallback(false);
             }
 
-            return bookingServiceResponseDTO;
+            return transportApiResponse;
         }
 
     }
 
     private void mapAddressCustomerResponse(CustomerResponseDTO customerDTO, AddressResponseDTO senderAddressDTO,
-            AddressResponseDTO receiverAddressDTO, BookingServiceResponseDTO bookingServiceResponseDTO) {
+            AddressResponseDTO receiverAddressDTO, BookingServiceResponseDTO bookingServiceResponseDTO,
+            TransportApiGatewayResponse transportApiResponse) {
 
-        bookingServiceResponseDTO.setServiceResponseStatusList(new ArrayList<>());
+        transportApiResponse.setServiceResponseStatusList(new ArrayList<>());
+
+        // TODO: REFCATORING!!!
 
         //@formatter:off
-        if(bookingServiceResponseDTO.getConnoteDTO() == null) {
-            bookingServiceResponseDTO.getServiceResponseStatusList()
-                        .add(new ServiceResponseStatus("connote-service","ERROR","No Response", null));
+        // Booking Service
+        if(bookingServiceResponseDTO != null) {
+        transportApiResponse.getServiceResponseStatusList()
+                .add(new ServiceResponseStatus("booking-service",
+                            bookingServiceResponseDTO.isFallback() ? "ERROR" : "OK",
+                            bookingServiceResponseDTO.getErrorMsg()));
+        }
+        // Connote Details
+        if(bookingServiceResponseDTO == null || bookingServiceResponseDTO.getConnoteDTO() == null) {
+            transportApiResponse.getServiceResponseStatusList()
+                        .add(new ServiceResponseStatus("connote-service","ERROR","No Response"));
         } else {
-                bookingServiceResponseDTO.getServiceResponseStatusList()
+                transportApiResponse.getServiceResponseStatusList()
                     .add(new ServiceResponseStatus("connote-service",
                             bookingServiceResponseDTO.getConnoteDTO().isFallback() ? "ERROR" : "OK",
-                            bookingServiceResponseDTO.getConnoteDTO().getErrorMsg(),
-                            bookingServiceResponseDTO.getConnoteDTO().getInstance()));
+                            bookingServiceResponseDTO.getConnoteDTO().getErrorMsg()));
                 }
 
-        bookingServiceResponseDTO.getServiceResponseStatusList()
+        // Address Service Sender
+        transportApiResponse.getServiceResponseStatusList()
                 .add(new ServiceResponseStatus("address-service > sender",
                         senderAddressDTO.isFallback() ? "ERROR" : "OK",
-                        senderAddressDTO.getErrorMsg(),
-                        senderAddressDTO.getInstance()));
-        bookingServiceResponseDTO.getServiceResponseStatusList()
+                        senderAddressDTO.getErrorMsg()));
+
+        // Address Service Receiver
+        transportApiResponse.getServiceResponseStatusList()
                 .add(new ServiceResponseStatus("address-service > receiver",
                         receiverAddressDTO.isFallback() ? "ERROR" : "OK",
-                        receiverAddressDTO.getErrorMsg(),
-                        receiverAddressDTO.getInstance()));
-        bookingServiceResponseDTO.getServiceResponseStatusList()
+                        receiverAddressDTO.getErrorMsg()));
+
+        // Customer Service
+        transportApiResponse.getServiceResponseStatusList()
                 .add(new ServiceResponseStatus("customer-service",
                         customerDTO.isFallback() ? "ERROR" : "OK",
-                        customerDTO.getErrorMsg(),
-                        customerDTO.getInstance()));
+                        customerDTO.getErrorMsg()));
 
         //@formatter:on
     }
 
-    public BookingServiceResponseDTO executeBookingRequest(BookingRequestDTO bookingRequestDTO) {
+    public TransportApiGatewayResponse executeBookingRequest(BookingRequestDTO bookingRequestDTO) {
         // 1.) check customer
         Future<CustomerResponseDTO> customerRequestFuture = checkCustomer(bookingRequestDTO);
 
@@ -153,11 +171,11 @@ public class BookingService {
         return createBookingRequest(customerResponseDTO, senderAddressResponseDTO, receiverAddressResponseDTO);
     }
 
-    private BookingServiceResponseDTO createBookingResponseFallback(String msg, Exception e) {
+    private TransportApiGatewayResponse createBookingResponseFallback(String msg, Exception e) {
 
-        BookingServiceResponseDTO bookingServiceResponseDTO = new BookingServiceResponseDTO();
-        bookingServiceResponseDTO.setErrorMsg(msg + ": " + e.getMessage());
-        return bookingServiceResponseDTO;
+        TransportApiGatewayResponse transportApiGatewayResponse = new TransportApiGatewayResponse();
+        transportApiGatewayResponse.setErrorMsg(msg + ": " + e.getMessage());
+        return transportApiGatewayResponse;
     }
 
     private AddressDTO exctractSenderAddress(BookingRequestDTO bookingRequestDTO) {

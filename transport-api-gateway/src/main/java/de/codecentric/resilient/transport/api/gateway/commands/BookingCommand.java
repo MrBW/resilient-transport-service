@@ -1,5 +1,7 @@
 package de.codecentric.resilient.transport.api.gateway.commands;
 
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -52,9 +54,19 @@ public class BookingCommand extends HystrixCommand<BookingServiceResponseDTO> {
 
             if (getExecutionException() != null) {
                 Exception exceptionFromThrowable = getExceptionFromThrowable(getExecutionException());
-                String errorMessage = (exceptionFromThrowable != null) ? exceptionFromThrowable.getMessage() : "";
+                if (exceptionFromThrowable == null) {
+                    bookingServiceResponseDTO.setErrorMsg("Unable to check exception type");
 
-                bookingServiceResponseDTO.setErrorMsg("Error: " + errorMessage);
+                } else if (exceptionFromThrowable instanceof HystrixRuntimeException) {
+                    HystrixRuntimeException hystrixRuntimeException = (HystrixRuntimeException) exceptionFromThrowable;
+                    bookingServiceResponseDTO.setErrorMsg(hystrixRuntimeException.getFailureType().name());
+
+                } else if (exceptionFromThrowable instanceof HystrixTimeoutException) {
+                    bookingServiceResponseDTO.setErrorMsg(HystrixRuntimeException.FailureType.TIMEOUT.name());
+                } else {
+
+                    bookingServiceResponseDTO.setErrorMsg(exceptionFromThrowable.getMessage());
+                }
                 return bookingServiceResponseDTO;
 
             } else {

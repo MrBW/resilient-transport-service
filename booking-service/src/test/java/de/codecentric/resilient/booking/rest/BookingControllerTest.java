@@ -49,7 +49,6 @@ public class BookingControllerTest {
         ConnoteDTO connoteDTO = new ConnoteDTO();
         connoteDTO.setConnote(123L);
         bookingResponseDTO.setConnoteDTO(connoteDTO);
-        bookingResponseDTO.setCreated(java.sql.Date.valueOf(LocalDate.of(2017,02,01)));
 
         when(bookingServiceMock.createBooking(bookingRequestDTO)).thenReturn(bookingResponseDTO);
 

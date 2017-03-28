@@ -3,18 +3,17 @@ package de.codecentric.resilient.dto;
 import java.util.Date;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Benjamin Wilms
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BookingServiceResponseDTO extends FallbackAbstractDTO {
 
     @JsonProperty(required = true)
     private ConnoteDTO connoteDTO;
-
-    @JsonProperty(required = true)
-    private Date created;
 
     @JsonProperty(required = true)
     private String status;
@@ -39,14 +38,6 @@ public class BookingServiceResponseDTO extends FallbackAbstractDTO {
 
     public void setConnoteDTO(ConnoteDTO connoteDTO) {
         this.connoteDTO = connoteDTO;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
     }
 
     public CustomerDTO getCustomerDTO() {

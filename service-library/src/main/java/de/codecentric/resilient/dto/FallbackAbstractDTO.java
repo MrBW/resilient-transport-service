@@ -1,9 +1,12 @@
 package de.codecentric.resilient.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * @author Benjamin Wilms
  */
-public class FallbackAbstractDTO extends AbstractDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class FallbackAbstractDTO {
 
 
     private boolean fallback;

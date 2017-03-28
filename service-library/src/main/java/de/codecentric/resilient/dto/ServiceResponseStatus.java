@@ -14,21 +14,10 @@ public class ServiceResponseStatus {
 
     private String error;
 
-    private String instance;
-
-    public ServiceResponseStatus(String serviceName, String status, String error, String instance) {
+    public ServiceResponseStatus(String serviceName, String status, String error) {
         this.serviceName = serviceName;
         this.status = status;
         this.error = error;
-        this.instance = instance;
-    }
-
-    public String getInstance() {
-        return instance;
-    }
-
-    public void setInstance(String instance) {
-        this.instance = instance;
     }
 
     public String getError() {

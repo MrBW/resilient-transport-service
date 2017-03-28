@@ -39,7 +39,6 @@ public class AddressController {
         }
 
         AddressDTO adressDTO = mapToAdressDTO(address);
-        addressDTO.setInstance(request.getLocalAddr() + " : " + request.getLocalPort());
 
         return new ResponseEntity<>(adressDTO, HttpStatus.FOUND);
 

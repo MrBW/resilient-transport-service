@@ -40,7 +40,6 @@ public class CustomerController {
         }
 
         CustomerDTO customerDTO = mapToCustomerDTO(customer);
-        customerDTO.setInstance(request.getLocalAddr() + " : " + request.getLocalPort());
 
         return new ResponseEntity<>(customerDTO, HttpStatus.FOUND);
 
@@ -59,7 +58,6 @@ public class CustomerController {
         }
 
         CustomerDTO customerDTO = mapToCustomerDTO(customer);
-        customerDTO.setInstance(request.getLocalName() + " : " + request.getLocalPort());
 
         return new ResponseEntity<>(customerDTO, HttpStatus.FOUND);
 

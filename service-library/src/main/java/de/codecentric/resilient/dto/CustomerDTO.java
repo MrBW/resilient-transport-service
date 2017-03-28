@@ -1,18 +1,19 @@
 package de.codecentric.resilient.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Benjamin Wilms
  */
-
-public class CustomerDTO extends AbstractDTO {
-
-    @JsonProperty(required = true)
-    public Long customerId;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CustomerDTO {
 
     @JsonProperty(required = true)
-    public String customerName;
+    private Long customerId;
+
+    @JsonProperty(required = true)
+    private String customerName;
 
     public CustomerDTO(Long customerId, String customerName) {
         this.customerId = customerId;

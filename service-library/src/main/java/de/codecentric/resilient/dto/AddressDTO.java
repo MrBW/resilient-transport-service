@@ -1,11 +1,13 @@
 package de.codecentric.resilient.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Benjamin Wilms
  */
-public class AddressDTO extends AbstractDTO {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class AddressDTO  {
 
     @JsonProperty(required = true)
     private String country;

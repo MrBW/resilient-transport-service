@@ -4,7 +4,7 @@ package de.codecentric.resilient.dto;
  * Booking Request DTO
  * @author Benjamin Wilms
  */
-public class BookingServiceRequestDTO extends AbstractDTO {
+public class BookingServiceRequestDTO {
 
     private CustomerResponseDTO customerDTO;
 

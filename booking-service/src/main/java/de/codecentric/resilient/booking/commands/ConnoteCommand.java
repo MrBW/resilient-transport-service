@@ -6,6 +6,8 @@ import org.springframework.web.client.RestTemplate;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.netflix.hystrix.exception.HystrixTimeoutException;
 import de.codecentric.resilient.dto.ConnoteDTO;
 
 /**
@@ -49,8 +51,21 @@ public class ConnoteCommand extends HystrixCommand<ConnoteDTO> {
 
             if (getExecutionException() != null) {
                 Exception exceptionFromThrowable = getExceptionFromThrowable(getExecutionException());
-                String errorMessage = (exceptionFromThrowable != null) ? exceptionFromThrowable.getMessage() : "";
-                connoteDTO.setErrorMsg(errorMessage);
+
+                if (exceptionFromThrowable == null) {
+                    connoteDTO.setErrorMsg("Unable to check exception type");
+
+                } else if (exceptionFromThrowable instanceof HystrixRuntimeException) {
+                    HystrixRuntimeException hystrixRuntimeException = (HystrixRuntimeException) exceptionFromThrowable;
+                    connoteDTO.setErrorMsg(hystrixRuntimeException.getFailureType().name());
+
+                } else if (exceptionFromThrowable instanceof HystrixTimeoutException) {
+                    connoteDTO.setErrorMsg(HystrixRuntimeException.FailureType.TIMEOUT.name());
+                } else {
+
+                    connoteDTO.setErrorMsg(exceptionFromThrowable.getMessage());
+                }
+
             } else
                 connoteDTO.setErrorMsg("unable to create connote");
             return connoteDTO;
