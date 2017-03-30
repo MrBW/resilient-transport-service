@@ -5,6 +5,16 @@ Resilient demo application - Transport Service
 ![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/HystrixTimeoutDefaults.png "Overview")
 
 # How to run
+## Requirements
+You have to install and run Docker for Mac or Windows on your system. By running mvn package, spotify maven plugin will create all Docker containers.
+
+Docker for Mac:
+https://docs.docker.com/docker-for-mac/install/
+
+Docker for Windows:
+https://docs.docker.com/docker-for-windows/install/
+
+
 
 ## Steps
 - mvn clean package
@@ -15,4 +25,8 @@ Resilient demo application - Transport Service
 
 Demo is running, try to send booking request...
 
-More info are coming soon 
+## Booking request
+Try to send a booking request, you will find a sample nodes.js script under:
+resilient-transport-service/scripts/booking-create.js
+
+...more details are coming...
