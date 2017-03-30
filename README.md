@@ -27,6 +27,6 @@ Demo is running, try to send booking request...
 
 ## Booking request
 Try to send a booking request, you will find a sample nodes.js script under:
-resilient-transport-service/scripts/booking-create.js
+https://github.com/MrBW/resilient-transport-service/blob/master/scripts/booking-create.js
 
 ...more details are coming...
