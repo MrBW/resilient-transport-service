@@ -28,12 +28,19 @@ https://docs.docker.com/docker-for-windows/install/
 - docker-compose stop
 - docker-compose up
 
-Demo is running, try to send booking request...
+# Demo
+If docker-compose has started all requiered containers, you can send a valid booking request to our transport-api-gateway. 
 
 ## Booking request
 Try to send a booking request, you will find a sample nodes.js script under:
 https://github.com/MrBW/resilient-transport-service/blob/master/scripts/booking-create.js
 
 ![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/demo-booking-req.gif "Booking Request")
+
+## Chaos Monkey activation
+A running and working system is boring, no failures or exceptions...we should activate our Chaos Monkey and get in some trouble.
+
+![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/demo-chaos-monkey-req.gif "Chaos Monkey")
+
 
 ...more details are coming...
