@@ -4,7 +4,7 @@ Resilient demo application - Transport Service
 
 ![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/HystrixTimeoutDefaults.png "Overview")
 
-Slides from my talk @ JavaLand 2017 can be found at speakerdeck.com:
+Slides from my talk @ JavaLand 2017 can be found at speakerdeck.com (German):
 https://speakerdeck.com/mrbw/hysterie-in-verteilten-systemen-hystrix-im-einsatz
 
 # How to run
