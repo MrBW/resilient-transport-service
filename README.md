@@ -34,6 +34,6 @@ Demo is running, try to send booking request...
 Try to send a booking request, you will find a sample nodes.js script under:
 https://github.com/MrBW/resilient-transport-service/blob/master/scripts/booking-create.js
 
-![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/booking-request-640px.gif "Booking Request")
+![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/demo-booking-req-640px.gif "Booking Request")
 
 ...more details are coming...
