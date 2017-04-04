@@ -1,3 +1,5 @@
+[ ![Codeship Status for MrBW/resilient-transport-service](https://app.codeship.com/projects/24a54080-fb34-0134-2a6b-7eca75f6b584/status?branch=master)](https://app.codeship.com/projects/211445)
+
 # resilient-transport-service
 Resilient demo application - Transport Service
 
