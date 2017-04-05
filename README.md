@@ -35,7 +35,7 @@ If docker-compose has started all requiered containers, you can send a valid boo
 Try to send a booking request, you will find a sample nodes.js script under:
 https://github.com/MrBW/resilient-transport-service/blob/master/scripts/booking-create.js
 
-![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/demo-booking-req.gif "Booking Request")
+![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/demo-booking-req-640px.gif "Booking Request")
 
 ## Chaos Monkey activation
 A running and working system is boring, no failures or exceptions...we should activate our Chaos Monkey and get in some trouble.
