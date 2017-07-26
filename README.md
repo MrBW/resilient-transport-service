@@ -3,7 +3,10 @@
 # resilient-transport-service
 Resilient demo application - Transport Service
 
+Architecture:
+![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/Architektur.png "Architecture")
 
+Flow:
 ![alt text](https://github.com/MrBW/resilient-transport-service/blob/master/docu/HystrixTimeoutDefaults.png "Overview")
 
 Slides from my talk @ JavaLand 2017 can be found at speakerdeck.com (German):
