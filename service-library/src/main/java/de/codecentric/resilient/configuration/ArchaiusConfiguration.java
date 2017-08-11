@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Import;
  * @author Benjamin Wilms (xd98870)
  */
 @Configuration
-@Import(ChaosMonkey.class)
 public class ArchaiusConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchaiusConfiguration.class);

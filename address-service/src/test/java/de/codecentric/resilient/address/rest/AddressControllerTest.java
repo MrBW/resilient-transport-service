@@ -63,34 +63,6 @@ public class AddressControllerTest {
     }
 
     @Test
-    public void validateAdressRequestParameter_Found() throws Exception {
-
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet("Hochstraße");
-        addressDTO.setStreetNumber("11");
-        addressDTO.setCity("Solingen");
-        addressDTO.setPostcode("42697");
-        addressDTO.setCountry("DE");
-
-        Address address = new Address(addressDTO.getCountry(), addressDTO.getCity(), addressDTO.getPostcode(),
-                addressDTO.getStreet(), addressDTO.getStreetNumber());
-        when(addressServiceMock.validateAddress(any(AddressDTO.class))).thenReturn(address);
-
-        //@formatter:off
-        mockMvc.perform(post("/rest/address/validate/params")
-                .param("country",addressDTO.getCountry())
-                .param("city",addressDTO.getCity())
-                .param("postcode",addressDTO.getPostcode())
-                .param("street",addressDTO.getStreet())
-                .param("streetnumber",addressDTO.getStreetNumber())
-
-        )
-        .andExpect(status().isFound());
-        //@formatter:on
-
-    }
-
-    @Test
     public void validateAdress_NotFound() throws Exception {
 
         AddressDTO addressDTO = new AddressDTO();

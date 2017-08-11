@@ -20,7 +20,7 @@ public class ChaosMonkey {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChaosMonkey.class);
 
     private DynamicBooleanProperty chaosMonkey =
-        DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", false);
+        DynamicPropertyFactory.getInstance().getBooleanProperty("chaos.monkey.active", true);
 
     private DynamicIntProperty chaosMonkeyLevel =
             DynamicPropertyFactory.getInstance().getIntProperty("chaos.monkey.level", 5);

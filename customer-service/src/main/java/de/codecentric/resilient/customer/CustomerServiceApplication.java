@@ -2,6 +2,7 @@ package de.codecentric.resilient.customer;
 
 import de.codecentric.resilient.customer.entity.Customer;
 import de.codecentric.resilient.customer.repository.CustomerRepository;
+import de.mrbw.chaos.monkey.EnableChaosMonkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -16,9 +17,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import de.codecentric.resilient.configuration.ArchaiusConfiguration;
 
+
 /**
  * @author Benjamin Wilms
  */
+@EnableChaosMonkey
 @EnableDiscoveryClient
 @SpringBootApplication
 @Import(ArchaiusConfiguration.class)
