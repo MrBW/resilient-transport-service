@@ -108,3 +108,13 @@ services:
       - "15672:15672"
     networks:
         - servicenet
+  config-server:
+        image: transport-service/config-server
+        ports:
+              - "8888:8888"
+        networks:
+          - servicenet
+        volumes:
+          - ./../resilient-transport-config:/resilient-transport-config
+        depends_on:
+          - eureka-service

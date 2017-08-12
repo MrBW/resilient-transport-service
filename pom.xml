@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.6.RELEASE</version>
+        <version>1.5.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -53,6 +53,8 @@
         <!-- shared components -->
         <service-library.version>1.0</service-library.version>
 
+        <spring-retry.version>1.2.1.RELEASE</spring-retry.version>
+        <spring-boot-starter-aop.version>1.5.6.RELEASE</spring-boot-starter-aop.version>
     </properties>
 
     <build>
@@ -122,6 +124,18 @@
                 <artifactId>spring-boot-starter-actuator</artifactId>
                 <version>${spring-boot-starter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.retry</groupId>
+                <artifactId>spring-retry</artifactId>
+                <version>${spring-retry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot-starter-aop.version}</version>
+            </dependency>
+
+
 
             <dependency>
                 <groupId>de.codecentric</groupId>

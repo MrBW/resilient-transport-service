@@ -19,7 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Benjamin Wilms (xd98870)
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,properties = {"spring.cloud.config.discovery.enabled=false","spring.cloud.config.enabled=false"})
 public class BookingRepositoryTest {
 
     @Autowired

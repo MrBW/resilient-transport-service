@@ -1,10 +1,12 @@
 package de.codecentric.resilient.transport.api.gateway;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.sleuth.Sampler;
 import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Benjamin Wilms
  */
 @EnableDiscoveryClient
+@EnableAutoConfiguration
+@RefreshScope
 @SpringBootApplication
 @EnableCircuitBreaker
 @EnableAsync
