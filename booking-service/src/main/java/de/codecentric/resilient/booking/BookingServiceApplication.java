@@ -1,6 +1,6 @@
 package de.codecentric.resilient.booking;
 
-import de.codecentric.resilient.configuration.ArchaiusConfiguration;
+import de.codecentric.resilient.configuration.DefautConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,10 +13,10 @@ import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import de.codecentric.resilient.configuration.Configuration;
 
 /**
  * Connote Service
+ *
  * @author Benjamin Wilms
  */
 @EnableDiscoveryClient
@@ -24,12 +24,12 @@ import de.codecentric.resilient.configuration.Configuration;
 @RefreshScope
 @SpringBootApplication
 @EnableCircuitBreaker
-@Import(value = {Configuration.class, ArchaiusConfiguration.class})
+@Import(DefautConfiguration.class)
 @EntityScan(basePackageClasses = {BookingServiceApplication.class, Jsr310JpaConverters.class})
 public class BookingServiceApplication {
 
     @Bean
-    public Sampler sampler(){
+    public Sampler sampler() {
         return new AlwaysSampler();
     }
 

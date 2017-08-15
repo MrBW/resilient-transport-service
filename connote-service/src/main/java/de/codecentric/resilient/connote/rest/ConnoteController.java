@@ -6,6 +6,7 @@ import de.codecentric.resilient.connote.service.ConnoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import de.codecentric.resilient.dto.ConnoteDTO;
@@ -21,6 +22,8 @@ public class ConnoteController {
 
     private ConnoteService connoteService;
 
+
+
     @Autowired
     public ConnoteController(ConnoteService connoteService) {
         this.connoteService = connoteService;
@@ -34,5 +37,7 @@ public class ConnoteController {
 
         return connote;
     }
+
+
 
 }

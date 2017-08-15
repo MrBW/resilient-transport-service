@@ -17,7 +17,7 @@ import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import de.codecentric.resilient.configuration.ArchaiusConfiguration;
+import de.codecentric.resilient.configuration.DefautConfiguration;
 
 
 /**
@@ -28,7 +28,7 @@ import de.codecentric.resilient.configuration.ArchaiusConfiguration;
 @RefreshScope
 @EnableDiscoveryClient
 @SpringBootApplication
-@Import(ArchaiusConfiguration.class)
+@Import(DefautConfiguration.class)
 @EntityScan(basePackageClasses = {CustomerServiceApplication.class, Jsr310JpaConverters.class})
 public class CustomerServiceApplication {
 
