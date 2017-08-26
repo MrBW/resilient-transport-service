@@ -11,7 +11,6 @@
 
     <artifactId>booking-service</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -24,6 +23,10 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bus-amqp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -94,11 +97,16 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Project deps-->
         <dependency>
             <groupId>com.codecentric.de.resilient</groupId>
             <artifactId>service-library</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>de.mrbw.chaos.monkey</groupId>
+            <artifactId>spring-aop-chaos-monkey</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

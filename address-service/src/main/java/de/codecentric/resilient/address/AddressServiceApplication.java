@@ -1,5 +1,6 @@
 package de.codecentric.resilient.address;
 
+import de.mrbw.chaos.monkey.EnableChaosMonkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -21,6 +22,7 @@ import de.codecentric.resilient.configuration.DefautConfiguration;
 /**
  * @author Benjamin Wilms
  */
+@EnableChaosMonkey
 @EnableDiscoveryClient
 @EnableAutoConfiguration
 @RefreshScope
@@ -43,7 +45,7 @@ public class AddressServiceApplication {
     @Bean
     public CommandLineRunner demo(AddressRepository repository) {
         return (args) -> {
-            repository.save(new Address("DE", "Solingen", "42697", "Hochstraße", "11"));
+            repository.save(new Address("DE", "Solingen", "42697", "Hochstrasse", "11"));
             repository.save(new Address("DE", "Berlin", "10785", "Kemperplatz", "1"));
             repository.save(new Address("DE", "Dortmund", "44137", "Hoher Wall", "15"));
             repository.save(new Address("DE", "Düsseldorf", "40591", "Kölner Landstraße", "11"));

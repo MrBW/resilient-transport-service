@@ -41,7 +41,7 @@ public class AddressControllerTest {
     public void validateAdress_Found() throws Exception {
 
         AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet("Hochstraße");
+        addressDTO.setStreet("Hochstrasse");
         addressDTO.setStreetNumber("11");
         addressDTO.setCity("Solingen");
         addressDTO.setPostcode("42697");
@@ -66,7 +66,7 @@ public class AddressControllerTest {
     public void validateAdress_NotFound() throws Exception {
 
         AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet("Hochstraße");
+        addressDTO.setStreet("Hochstrasse");
         addressDTO.setStreetNumber("11");
         addressDTO.setCity("Solingen");
         addressDTO.setPostcode("42697");
@@ -89,7 +89,7 @@ public class AddressControllerTest {
     public void validateAdress_Exception() throws Exception {
 
         AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet("Hochstraße");
+        addressDTO.setStreet("Hochstrasse");
         addressDTO.setStreetNumber("11");
         addressDTO.setCity("Solingen");
         addressDTO.setPostcode("42697");

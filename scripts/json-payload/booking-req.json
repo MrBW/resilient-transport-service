@@ -1,0 +1,13 @@
+{
+  "customerId": 1,
+  "sender-country": "de",
+  "sender-city": "Solingen",
+  "sender-postcode": "42697",
+  "sender-street": "Hochstrasse",
+  "sender-streetnumber": "11",
+  "receiver-country": "de",
+  "receiver-city": "Solingen",
+  "receiver-postcode": "42697",
+  "receiver-street": "Hochstrasse",
+  "receiver-streetnumber": "11"
+}

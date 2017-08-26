@@ -33,7 +33,7 @@ public class AddressServiceIntegrationTest {
 
         addressRepository.deleteAll();
 
-        addressRepository.save(new Address("DE", "Solingen", "42697", "Hochstraße", "11"));
+        addressRepository.save(new Address("DE", "Solingen", "42697", "Hochstrasse", "11"));
         addressRepository.save(new Address("DE", "Berlin", "10785", "Kemperplatz", "1"));
         addressRepository.save(new Address("DE", "Dortmund", "44137", "Hoher Wall", "15"));
         addressRepository.save(new Address("DE", "Düsseldorf", "40591", "Kölner Landstraße", "11"));
@@ -86,14 +86,14 @@ public class AddressServiceIntegrationTest {
         assertThat(address.getCity(), is("Solingen"));
         assertThat(address.getCountry(), is(addressDto.getCountry()));
         assertThat(address.getPostcode(), is(addressDto.getPostcode()));
-        assertThat(address.getStreet(), is("Hochstraße"));
+        assertThat(address.getStreet(), is("Hochstrasse"));
         assertThat(address.getStreetNumber(), is(addressDto.getStreetNumber()));
 
     }
 
     private AddressDTO createAddressDto() {
         AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setStreet("Hochstraße");
+        addressDTO.setStreet("Hochstrasse");
         addressDTO.setStreetNumber("11");
         addressDTO.setCity("Solingen");
         addressDTO.setPostcode("42697");

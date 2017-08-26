@@ -1,5 +1,6 @@
 package de.codecentric.resilient.connote;
 
+import de.mrbw.chaos.monkey.EnableChaosMonkey;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ import de.codecentric.resilient.configuration.DefautConfiguration;
  * Connote Service
  * @author Benjamin Wilms
  */
+@EnableChaosMonkey
 @EnableDiscoveryClient
 @EnableAutoConfiguration
 @RefreshScope

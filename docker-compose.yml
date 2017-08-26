@@ -95,13 +95,7 @@ services:
                 - eureka-service
                 - rabbitmq
                 - config-server
-#  etcd:
-#        image: elcolio/etcd
-#        command: -advertise-client-urls=http://0.0.0.0:2379 -listen-client-urls=http://0.0.0.0:2379
-#        ports:
-  #         - "2379:2379"
-  #       networks:
-  #         - servicenet
+
   rabbitmq:
     image: rabbitmq:management
     ports:
@@ -109,6 +103,7 @@ services:
       - "15672:15672"
     networks:
        - servicenet
+
   config-server:
         image: transport-service/config-server
         ports:
@@ -116,6 +111,7 @@ services:
         networks:
           - servicenet
         volumes:
-          - ./../resilient-transport-config:/resilient-transport-config
+          - ./config-server-props:/resilient-transport-config
         depends_on:
           - eureka-service
+          - rabbitmq

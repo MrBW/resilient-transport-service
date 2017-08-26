@@ -15,14 +15,13 @@ import org.springframework.web.client.RestTemplate;
  * @author Benjamin Wilms (xd98870)
  */
 @Configuration
-@EnableScheduling
 public class DefautConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefautConfiguration.class);
 
     @RefreshScope
     @Bean
-    public AbstractConfiguration sampleArchaiusConfiguration() throws Exception {
+    public AbstractConfiguration archaiusConfiguration() throws Exception {
 
         LOGGER.info("Enable Archaius Configuration");
         ConcurrentMapConfiguration concurrentMapConfiguration = new ConcurrentMapConfiguration();
@@ -35,11 +34,5 @@ public class DefautConfiguration {
     RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-//    @Bean
-//    RefreshConfigScheduler refreshConfigScheduler() {
-//        return new RefreshConfigScheduler();
-//    }
-
 
 }
