@@ -1,22 +1,25 @@
 package de.codecentric.resilient.address.rest;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.codecentric.resilient.address.entity.Address;
+import de.codecentric.resilient.address.service.AddressService;
+import de.codecentric.resilient.dto.AddressDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import de.codecentric.resilient.address.entity.Address;
-import de.codecentric.resilient.address.service.AddressService;
-import de.codecentric.resilient.dto.AddressDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Benjamin Wilms (xd98870)
@@ -30,10 +33,15 @@ public class AddressControllerTest {
     @Mock
     private AddressService addressServiceMock;
 
+    @Mock
+    private Tracer tracer;
+
+
     @Before
     public void setUp() throws Exception {
 
-        mockMvc = MockMvcBuilders.standaloneSetup(new AddressController(addressServiceMock)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new AddressController(addressServiceMock, tracer)).build();
+        when(tracer.getCurrentSpan()).thenReturn(Span.builder().build());
 
     }
 
@@ -48,10 +56,10 @@ public class AddressControllerTest {
         addressDTO.setCountry("DE");
 
         Address address = new Address(addressDTO.getCountry(), addressDTO.getCity(), addressDTO.getPostcode(),
-            addressDTO.getStreet(), addressDTO.getStreetNumber());
+                addressDTO.getStreet(), addressDTO.getStreetNumber());
         when(addressServiceMock.validateAddress(any(AddressDTO.class))).thenReturn(address);
 
-    //@formatter:off
+        //@formatter:off
         mockMvc.perform(post("/rest/address/validate")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(jsonStringFromObject(addressDTO))
@@ -74,7 +82,7 @@ public class AddressControllerTest {
 
         when(addressServiceMock.validateAddress(any(AddressDTO.class))).thenReturn(null);
 
-    //@formatter:off
+        //@formatter:off
         mockMvc.perform(post("/rest/address/validate")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(jsonStringFromObject(addressDTO))
@@ -97,7 +105,7 @@ public class AddressControllerTest {
 
         when(addressServiceMock.validateAddress(any(AddressDTO.class))).thenThrow(new RuntimeException("Error"));
 
-    //@formatter:off
+        //@formatter:off
         mockMvc.perform(post("/rest/address/validate")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(jsonStringFromObject(addressDTO))
