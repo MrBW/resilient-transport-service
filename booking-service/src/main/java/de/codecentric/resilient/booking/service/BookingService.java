@@ -47,6 +47,7 @@ public class BookingService {
 
         if (connoteDTO.isFallback()) {
             bookingResponseDTO.setErrorMsg("Connote error: " + connoteDTO.getErrorMsg());
+            bookingResponseDTO.setStatus("ERROR");
             return bookingResponseDTO;
         }
 
@@ -58,6 +59,7 @@ public class BookingService {
         CustomerResponseDTO customerDTO = bookingRequestDTO.getCustomerDTO();
         bookingResponseDTO.setCustomerDTO(new CustomerDTO(customerDTO.getCustomerId(), customerDTO.getCustomerName()));
         bookingResponseDTO.setConnoteDTO(connoteDTO);
+        bookingResponseDTO.setStatus("OK");
 
         return bookingResponseDTO;
 

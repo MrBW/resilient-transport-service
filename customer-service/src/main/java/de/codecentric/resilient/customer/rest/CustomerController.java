@@ -2,6 +2,8 @@ package de.codecentric.resilient.customer.rest;
 
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +24,12 @@ import de.codecentric.resilient.dto.CustomerDTO;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final Tracer tracer;
 
     @Autowired
-    public CustomerController(CustomerService customerService) {
+    public CustomerController(CustomerService customerService, Tracer tracer) {
         this.customerService = customerService;
+        this.tracer = tracer;
     }
 
     @RequestMapping(value = "search/id")
@@ -40,6 +44,9 @@ public class CustomerController {
         }
 
         CustomerDTO customerDTO = mapToCustomerDTO(customer);
+
+        appendSpan(customerDTO.getCustomerName(), "customer-name");
+        appendSpan(String.valueOf(customerDTO.getCustomerId()), "customer-id");
 
         return new ResponseEntity<>(customerDTO, HttpStatus.FOUND);
 
@@ -59,11 +66,22 @@ public class CustomerController {
 
         CustomerDTO customerDTO = mapToCustomerDTO(customer);
 
+        appendSpan(customerDTO.getCustomerName(), "customer-name");
+        appendSpan(String.valueOf(customerDTO.getCustomerId()), "customer-id");
+
         return new ResponseEntity<>(customerDTO, HttpStatus.FOUND);
 
     }
 
     private CustomerDTO mapToCustomerDTO(Customer customer) {
         return new CustomerDTO(customer.getId(), customer.getName());
+    }
+
+    private void appendSpan(String value, String key) {
+        Span span = tracer.getCurrentSpan();
+        String baggageKey = key;
+        String baggageValue = value;
+        span.setBaggageItem(baggageKey, baggageValue);
+        tracer.addTag(baggageKey, baggageValue);
     }
 }

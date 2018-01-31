@@ -1,31 +1,33 @@
 package de.codecentric.resilient.address;
 
-import com.netflix.config.DynamicBooleanProperty;
-import de.codecentric.resilient.chaosmonkey.ChaosMonkey;
+import de.mrbw.chaos.monkey.EnableChaosMonkey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.cloud.sleuth.Sampler;
 import org.springframework.cloud.sleuth.sampler.AlwaysSampler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-import com.netflix.config.DynamicPropertyFactory;
 import de.codecentric.resilient.address.entity.Address;
 import de.codecentric.resilient.address.repository.AddressRepository;
-import de.codecentric.resilient.configuration.ArchaiusConfiguration;
+import de.codecentric.resilient.configuration.DefautConfiguration;
 
 /**
  * @author Benjamin Wilms
  */
+@EnableChaosMonkey
 @EnableDiscoveryClient
+@EnableAutoConfiguration
+@RefreshScope
 @SpringBootApplication
-@Import(ArchaiusConfiguration.class)
+@Import(DefautConfiguration.class)
 @EntityScan(basePackageClasses = {AddressServiceApplication.class, Jsr310JpaConverters.class})
 public class AddressServiceApplication {
 
@@ -43,7 +45,7 @@ public class AddressServiceApplication {
     @Bean
     public CommandLineRunner demo(AddressRepository repository) {
         return (args) -> {
-            repository.save(new Address("DE", "Solingen", "42697", "Hochstraße", "11"));
+            repository.save(new Address("DE", "Solingen", "42697", "Hochstrasse", "11"));
             repository.save(new Address("DE", "Berlin", "10785", "Kemperplatz", "1"));
             repository.save(new Address("DE", "Dortmund", "44137", "Hoher Wall", "15"));
             repository.save(new Address("DE", "Düsseldorf", "40591", "Kölner Landstraße", "11"));

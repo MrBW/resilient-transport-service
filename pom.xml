@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.6.RELEASE</version>
+        <version>1.5.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -27,6 +27,7 @@
         <module>transport-api-gateway</module>
         <module>zipkin-service</module>
         <module>hystrix-turbine-dashboard</module>
+        <module>config-server</module>
     </modules>
 
     <properties>
@@ -35,20 +36,26 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+
         <!-- Library versions-->
-        <netflix.archaius.version>0.7.4</netflix.archaius.version>
+        <netflix.archaius.version>0.7.5</netflix.archaius.version>
         <spring-cloud-dependencies.version>Dalston.SR2</spring-cloud-dependencies.version>
-        <commons-lang3.version>3.4</commons-lang3.version>
+        <spring-cloud-netflix-turbine-amqp.version>1.0.7.RELEASE</spring-cloud-netflix-turbine-amqp.version>
+        <spring-cloud-config.version>1.3.1.RELEASE</spring-cloud-config.version>
         <spring-boot-starter.version>1.5.6.RELEASE</spring-boot-starter.version>
         <spring-boot-admin.version>1.5.3</spring-boot-admin.version>
         <jolokia-core.version>1.3.5</jolokia-core.version>
         <joda-time.version>2.9.7</joda-time.version>
         <etcd-client.version>0.34</etcd-client.version>
+        <commons-lang3.version>3.4</commons-lang3.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
         <!-- shared components -->
         <service-library.version>1.0</service-library.version>
-        <spring-cloud-netflix-turbine-amqp.version>1.0.7.RELEASE</spring-cloud-netflix-turbine-amqp.version>
+
+        <spring-retry.version>1.2.1.RELEASE</spring-retry.version>
+        <spring-boot-starter-aop.version>1.5.6.RELEASE</spring-boot-starter-aop.version>
+        <spring-aop-chaos-monkey.version>1.0</spring-aop-chaos-monkey.version>
     </properties>
 
     <build>
@@ -100,9 +107,21 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>de.mrbw.chaos.monkey</groupId>
+                <artifactId>spring-aop-chaos-monkey</artifactId>
+                <version>${spring-aop-chaos-monkey.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-config</artifactId>
+                <version>${spring-cloud-config.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -111,6 +130,18 @@
                 <artifactId>spring-boot-starter-actuator</artifactId>
                 <version>${spring-boot-starter.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.retry</groupId>
+                <artifactId>spring-retry</artifactId>
+                <version>${spring-retry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot-starter-aop.version}</version>
+            </dependency>
+
+
 
             <dependency>
                 <groupId>de.codecentric</groupId>

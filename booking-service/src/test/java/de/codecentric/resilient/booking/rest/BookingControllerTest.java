@@ -3,7 +3,6 @@ package de.codecentric.resilient.booking.rest;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.time.LocalDate;
 
 import de.codecentric.resilient.booking.service.BookingService;
 import de.codecentric.resilient.dto.*;
@@ -12,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -33,9 +34,13 @@ public class BookingControllerTest {
     @Mock
     private BookingService bookingServiceMock;
 
+    @Mock
+    private Tracer tracer;
+
     @Before
     public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookingController(bookingServiceMock)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookingController(bookingServiceMock, tracer)).build();
+        when(tracer.getCurrentSpan()).thenReturn(Span.builder().build());
     }
 
     @Test
@@ -49,6 +54,7 @@ public class BookingControllerTest {
         ConnoteDTO connoteDTO = new ConnoteDTO();
         connoteDTO.setConnote(123L);
         bookingResponseDTO.setConnoteDTO(connoteDTO);
+        bookingResponseDTO.setStatus("OK");
 
         when(bookingServiceMock.createBooking(bookingRequestDTO)).thenReturn(bookingResponseDTO);
 

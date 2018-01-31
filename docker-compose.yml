@@ -19,8 +19,8 @@ services:
              - servicenet
      depends_on:
              - eureka-service
-             - etcd
              - rabbitmq
+             - config-server
 
   spring-boot-admin:
      image: transport-service/spring-boot-admin
@@ -30,8 +30,8 @@ services:
              - servicenet
      depends_on:
              - eureka-service
-             - etcd
              - rabbitmq
+             - config-server
 
   address-service:
        image: transport-service/address-service
@@ -40,8 +40,8 @@ services:
                - servicenet
        depends_on:
                - eureka-service
-               - etcd
                - rabbitmq
+               - config-server
 
   customer-service:
          image: transport-service/customer-service
@@ -50,8 +50,8 @@ services:
                  - servicenet
          depends_on:
                  - eureka-service
-                 - etcd
                  - rabbitmq
+                 - config-server
 
   booking-service:
          image: transport-service/booking-service
@@ -59,8 +59,9 @@ services:
                  - servicenet
          depends_on:
                  - eureka-service
-                 - etcd
                  - rabbitmq
+                 - config-server
+
   transport-api-gateway:
          image: transport-service/transport-api-gateway
          ports:
@@ -69,8 +70,8 @@ services:
                  - servicenet
          depends_on:
                 - eureka-service
-                - etcd
                 - rabbitmq
+                - config-server
 
   zipkin-service:
          image: transport-service/zipkin-service
@@ -80,8 +81,8 @@ services:
                 - servicenet
          depends_on:
                 - eureka-service
-                - etcd
                 - rabbitmq
+                - config-server
 
   hystrix-turbine-service:
          image: transport-service/hystrix-turbine-dashboard
@@ -92,19 +93,25 @@ services:
                 - servicenet
          depends_on:
                 - eureka-service
-                - etcd
                 - rabbitmq
-  etcd:
-        image: elcolio/etcd
-        command: -advertise-client-urls=http://0.0.0.0:2379 -listen-client-urls=http://0.0.0.0:2379
-        ports:
-          - "2379:2379"
-        networks:
-          - servicenet
+                - config-server
+
   rabbitmq:
     image: rabbitmq:management
     ports:
       - "5672:5672"
       - "15672:15672"
     networks:
-        - servicenet
+       - servicenet
+
+  config-server:
+        image: transport-service/config-server
+        ports:
+              - "8888:8888"
+        networks:
+          - servicenet
+        volumes:
+          - ./config-server-props:/resilient-transport-config
+        depends_on:
+          - eureka-service
+          - rabbitmq
